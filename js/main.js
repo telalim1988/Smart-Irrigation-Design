@@ -39,13 +39,6 @@ let chartHours = [];
 let simulationStarted = false;
 // ================= DIGITAL TWIN CALIBRATION =================
 
-let calibration = {
-
-NH4_factor: 1.0,
-MLSS_factor: 1.0,
-SLR_factor: 1.0
-
-};
 
 // ===== REAL PLANT DATA (Calibration Reference) =====
 
