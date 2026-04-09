@@ -1,107 +1,45 @@
+/* RESET */
 body {
+  margin: 0;
   background: #0f172a;
   color: #e2e8f0;
   font-family: Arial;
 }
 
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding: 10px 20px;
   background: #020617;
   border-bottom: 2px solid #0ea5e9;
 }
 
-.status.running {
+.status {
   color: #22c55e;
+  font-weight: bold;
 }
 
-body {
-  margin: 0;
-  background: #0f172a;
-  color: white;
-  font-family: Arial;
-}
-
-/* MAIN GRID */
+/* GRID LAYOUT */
 .container {
   display: grid;
   grid-template-columns: 320px 1fr 320px;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 100px);
 }
 
 /* PANELS */
 .panel {
+  padding: 15px;
   border-right: 1px solid #1e293b;
-  padding: 10px;
   overflow-y: auto;
 }
 
-/* REMOVE ANY WIDTHS */
-.left, .center, .right {
-  width: auto !important;
-}
-
-.box {
-  background: #020617;
-  padding: 15px;
-  margin: 10px 0;
-  border: 1px solid #334155;
-  text-align: center;
-}
-
-button {
-  background: #0ea5e9;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  color: white;
-  margin-top: 10px;
-}
-
-.footer {
-  padding: 10px;
-  background: #020617;
-  border-top: 2px solid #0ea5e9;
-}
-
-.group {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #1e293b;
-  background: #020617;
-}
-
-.group h4 {
-  margin-bottom: 8px;
-  color: #38bdf8;
-}
-
-label {
-  display: block;
-  margin-top: 5px;
-  font-size: 12px;
-}
-
-input, select {
-  width: 100%;
-  padding: 5px;
-  margin-top: 3px;
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: white;
-}
-
-.section {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
+/* CARDS */
 .card {
   background: #020617;
   border: 1px solid #1e293b;
   padding: 10px;
+  margin-bottom: 15px;
   border-radius: 6px;
 }
 
@@ -111,8 +49,8 @@ input, select {
   font-size: 13px;
 }
 
-.card input,
-.card select {
+/* INPUTS */
+input, select {
   width: 100%;
   margin-bottom: 6px;
   padding: 6px;
@@ -122,8 +60,8 @@ input, select {
   border-radius: 4px;
 }
 
+/* BUTTON */
 .run-btn {
-  margin-top: 15px;
   width: 100%;
   padding: 12px;
   background: #0ea5e9;
@@ -134,4 +72,30 @@ input, select {
 
 .run-btn:hover {
   background: #0284c7;
+}
+
+/* PROCESS BOXES */
+.box {
+  background: #020617;
+  padding: 20px;
+  margin-bottom: 15px;
+  border: 1px solid #334155;
+  text-align: center;
+}
+
+.box p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.box span {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* FOOTER */
+.footer {
+  padding: 10px;
+  background: #020617;
+  border-top: 2px solid #0ea5e9;
 }
