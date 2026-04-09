@@ -16,30 +16,30 @@ body {
   color: #22c55e;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 25% 50% 25%;
-  height: 80vh;
-  gap: 10px;
+body {
+  margin: 0;
+  background: #0f172a;
+  color: white;
+  font-family: Arial;
 }
 
+/* GRID LAYOUT */
+.container {
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  height: calc(100vh - 80px);
+}
+
+/* PANELS */
 .panel {
-  background: #020617;
+  border-right: 1px solid #1e293b;
   padding: 10px;
-  border: 1px solid #1e293b;
   overflow-y: auto;
 }
 
-.left {
-  width: 25%;
-}
-
-.center {
-  width: 50%;
-}
-
-.right {
-  width: 25%;
+/* REMOVE EXTRA WIDTHS */
+.left, .center, .right {
+  width: 100%;
 }
 
 .box {
