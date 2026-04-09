@@ -1,25 +1,35 @@
 function calculate() {
 
-  // 🔹 قراءة القيم
-  let et0 = parseFloat(document.querySelector('[placeholder="ET0 (mm/day)"]').value);
-  let kc = parseFloat(document.querySelector('[placeholder="Kc"]').value);
-  let area = parseFloat(document.querySelector('[placeholder="Area (m²)"]').value);
-  let hours = parseFloat(document.querySelector('[placeholder="Operating Hours/day"]').value);
+  let et0 = parseFloat(document.getElementById("et0").value);
+  let kc = parseFloat(document.getElementById("kc").value);
+  let area = parseFloat(document.getElementById("area").value);
+  let hours = parseFloat(document.getElementById("hours").value);
+  let system = document.getElementById("system").value;
 
-  // 🔴 تحقق من المدخلات
-  if (!et0 || !kc || !area || !hours) {
-    alert("⚠️ Please fill all required inputs");
+  if (isNaN(et0) || isNaN(kc) || isNaN(area) || isNaN(hours)) {
+    alert("⚠️ Fill all inputs");
     return;
+  }
+
+  // 🔴 تحديد الكفاءة حسب النظام
+  let efficiency;
+
+  if (system === "drip") {
+    efficiency = 0.90;
+  } else if (system === "sprinkler") {
+    efficiency = 0.75;
   }
 
   // 🔹 الحسابات
   let etc = et0 * kc;
 
-  let volume = (etc * area) / 1000; // m³/day
+  let ir_gross = etc / efficiency;
 
-  let flow = volume / hours; // m³/hr
+  let volume = (ir_gross * area) / 1000;
 
-  // 🔹 عرض النتائج
+  let flow = volume / hours;
+
+  // 🔹 عرض النتيجة
   document.querySelectorAll(".box span")[0].innerText = flow.toFixed(2);
 
 }
