@@ -8,46 +8,75 @@
 <body>
 
 <div class="header">
-  <h1>IRRIGATION DCS</h1>
+  <h1>SMART-IRRIGATION-DCS</h1>
   <div class="status running">SYSTEM ONLINE</div>
 </div>
 
-<div class="container">
+<div class="panel left">
+  <h3>INPUTS</h3>
 
-  <!-- LEFT PANEL -->
-  <div class="panel left">
-    <h3>INPUTS</h3>
-
-    <label>System Type</label>
+  <!-- SYSTEM -->
+  <div class="group">
+    <h4>System</h4>
+    <label>Type</label>
     <select id="system">
       <option value="drip">Drip</option>
       <option value="sprinkler">Sprinkler</option>
     </select>
+  </div>
 
-    <label>Area (m²)</label>
-    <input id="area" type="number">
-
-    <label>ET0</label>
+  <!-- WATER -->
+  <div class="group">
+    <h4>Water Requirement</h4>
+    <label>ET0 (mm/day)</label>
     <input id="et0" type="number">
 
     <label>Kc</label>
     <input id="kc" type="number">
+  </div>
 
+  <!-- FIELD -->
+  <div class="group">
+    <h4>Field</h4>
+    <label>Area (m²)</label>
+    <input id="area" type="number">
+
+    <label>Zones</label>
+    <input id="zones" type="number">
+  </div>
+
+  <!-- OPERATION -->
+  <div class="group">
+    <h4>Operation</h4>
+    <label>Operating Hours/day</label>
+    <input id="hours" type="number">
+  </div>
+
+  <!-- HYDRAULIC -->
+  <div class="group">
+    <h4>Hydraulics</h4>
     <label>Pipe Length (m)</label>
     <input id="length" type="number">
 
     <label>Elevation (m)</label>
     <input id="elevation" type="number">
 
-    <label>Material</label>
+    <label>Velocity (m/s)</label>
+    <input id="velocity" type="number">
+  </div>
+
+  <!-- MATERIAL -->
+  <div class="group">
+    <h4>Pipe Material</h4>
     <select id="material">
       <option value="pvc">PVC</option>
       <option value="hdpe">HDPE</option>
       <option value="steel">Steel</option>
     </select>
-
-    <button onclick="calculate()">RUN</button>
   </div>
+
+  <button onclick="calculate()">RUN DESIGN</button>
+</div>
 
   <!-- CENTER PANEL -->
   <div class="panel center">
