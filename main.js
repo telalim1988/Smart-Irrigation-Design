@@ -29,6 +29,19 @@ function calculate() {
 
   let flow = volume / hours;
 
+  let zones = parseFloat(document.getElementById("zones").value);
+
+if (isNaN(zones) || zones <= 0) {
+  alert("⚠️ Enter number of zones");
+  return;
+}
+
+// 🔹 تقسيم التصريف
+let flow_zone = flow / zones;
+
+// 🔹 تحويل إلى m³/s
+let flow_m3s = flow_zone / 3600;
+
   // 🔹 قراءة السرعة
 let velocity = parseFloat(document.getElementById("velocity").value);
 
@@ -86,7 +99,7 @@ document.querySelectorAll(".box span")[3].innerText = power_kw.toFixed(2);
 
 
 // 🔹 عرض النتائج
-document.querySelectorAll(".box span")[0].innerText = flow.toFixed(2);
+document.querySelectorAll(".box span")[0].innerText = flow_zone.toFixed(2);
 document.querySelectorAll(".box span")[4].innerText = diameter.toFixed(3);
 document.querySelectorAll(".box span")[1].innerText = hf.toFixed(2);
 document.querySelectorAll(".box span")[2].innerText = tdh.toFixed(2);
