@@ -113,6 +113,24 @@ if (velocity < 0.6) {
 if (velocity > 2) {
   alertMessage = "⚠️ High Velocity";
 }
+
+  // نبدأ برسالة افتراضية
+let alertMessage = "OK";
+
+// 🔴 Velocity Check
+if (velocity < 0.6) {
+  alertMessage = "⚠️ Low Velocity";
+}
+
+if (velocity > 2) {
+  alertMessage = "⚠️ High Velocity";
+}
+
+// 🔴 Diameter Check
+if (diameter < 0.02) {
+  alertMessage = "⚠️ Pipe Diameter Too Small";
+}
+
   
 
 
@@ -122,5 +140,6 @@ document.querySelectorAll(".box span")[1].innerText = hf.toFixed(2);
 document.querySelectorAll(".box span")[2].innerText = tdh.toFixed(2);
 document.querySelectorAll(".box span")[3].innerText = power_kw.toFixed(2);
 document.querySelectorAll(".box span")[4].innerText = diameter.toFixed(3);
+document.getElementById("alerts").innerText = alertMessage;
 document.getElementById("alerts").innerText = alertMessage;
 }
