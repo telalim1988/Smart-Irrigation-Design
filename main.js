@@ -148,6 +148,30 @@ if (hf_ratio > 0.5) {
 } else if (hf_ratio > 0.3) {
   alertMessage = "⚠️ Moderate Head Loss";
 }
+
+  let recommendation = "✔️ Design is Good";
+
+// 🔴 Diameter Recommendation
+if (diameter < 0.02) {
+  recommendation = "Increase pipe diameter to reduce losses";
+}
+
+// 🔴 Velocity Recommendation
+if (velocity > 2) {
+  recommendation = "Reduce velocity to avoid high friction losses";
+}
+
+if (velocity < 0.6) {
+  recommendation = "Increase velocity to avoid sedimentation";
+}
+
+// 🔴 Head Loss Recommendation
+if (hf_ratio > 0.5) {
+  recommendation = "System inefficient: Increase pipe diameter";
+} else if (hf_ratio > 0.3) {
+  recommendation = "Moderate losses: Consider optimizing pipe size";
+}
+
   
 // 🔹 عرض النتائج
 document.querySelectorAll(".box span")[0].innerText = flow_zone.toFixed(2);
@@ -156,7 +180,6 @@ document.querySelectorAll(".box span")[2].innerText = tdh_std.toFixed(2);
 document.querySelectorAll(".box span")[3].innerText = power_kw.toFixed(2);
 document.querySelectorAll(".box span")[4].innerText = diameter.toFixed(3);
 document.getElementById("std_diameter").innerText = std_diameter.toFixed(3);
-
 document.getElementById("alerts").innerText = alertMessage;
-
+document.getElementById("recommendation").innerText = recommendation;
 }
