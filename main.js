@@ -247,6 +247,9 @@ let velocities = [0.6, 0.8, 1.0, 1.2, 1.5];
 let best_velocity = velocity;
 let best_diameter = std_diameter;
 let min_hf = hf;
+let best_energy = Infinity;
+let best_cost = Infinity;
+let best_config = "";
 
 // 🔹 نجرب كل السرعات
 for (let v of velocities) {
@@ -262,11 +265,25 @@ for (let v of velocities) {
   let hf_test = 10.67 * length * Math.pow(flow_m3s, 1.852) /
                 (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
 
-  // 🔥 نختار أقل فقد
-  if (hf_test < min_hf) {
-    min_hf = hf_test;
+  let tdh_test = hf_test + elevation;
+
+  // 🔹 حساب الطاقة لكل خيار
+  let flow_test_m3s = flow_pump / 3600;
+
+  let power_test = (1000 * 9.81 * flow_test_m3s * tdh_test) / 1000 / 0.75;
+
+  let energy_test = power_test * hours;
+
+  let cost_test = energy_test * tariff;
+
+  // 🔥 اختيار الأقل تكلفة
+  if (cost_test < best_cost) {
+    best_cost = cost_test;
+    best_energy = energy_test;
     best_velocity = v;
     best_diameter = std_d;
+
+    best_config = "Velocity: " + v + " m/s | Diameter: " + std_d;
   }
 }
 
@@ -338,7 +355,11 @@ document.getElementById("recommendation").innerText = recommendation;
 document.getElementById("pump_select").innerText =
   "Flow: " + flow_pump.toFixed(2) +
 " | Head: " + tdh_std.toFixed(2);
-
+  
+document.getElementById("recommendation").innerText =
+  "💡 Best Design → " + best_config +
+  " | Cost: $" + best_cost.toFixed(2) + "/day";
+  
 document.getElementById("energy").innerText = energy.toFixed(2);
 document.getElementById("cost").innerText = cost.toFixed(2);
   
