@@ -338,9 +338,6 @@ let ctx = document.getElementById("pumpChart").getContext("2d");
 let curve_flow = [];
 let curve_head = [];
 
-let curve_flow = [];
-let curve_head = [];
-
 for (let q = 0; q <= 5; q += 0.1) {
   curve_flow.push(q);
   curve_head.push(interpolateHead(q, pump_curve));
