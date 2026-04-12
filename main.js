@@ -176,6 +176,22 @@ let power_watt = 1000 * 9.81 * flow_pump_m3s * tdh_std;
 // 🔹 القدرة الفعلية
 let power_kw = (power_watt / efficiency_pump) / 1000;
 
+  // =========================
+// 🔹 ENERGY CALCULATION
+// =========================
+
+let tariff = parseFloat(document.getElementById("tariff").value);
+
+if (isNaN(tariff)) {
+  tariff = 0.1; // default
+}
+
+// kWh/day
+let energy = power_kw * hours;
+
+// cost/day
+let cost = energy * tariff;
+
 // 🔹 Alerts
 let alertMessage = "OK";
 
@@ -322,6 +338,9 @@ document.getElementById("recommendation").innerText = recommendation;
 document.getElementById("pump_select").innerText =
   "Flow: " + flow_pump.toFixed(2) +
 " | Head: " + tdh_std.toFixed(2);
+
+document.getElementById("energy").innerText = energy.toFixed(2);
+document.getElementById("cost").innerText = cost.toFixed(2);
   
 document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
 }
