@@ -1,3 +1,14 @@
+// 🔹 Pump Curve (مثال لمضخة واحدة)
+let pump_curve = [
+  { flow: 0, head: 25 },
+  { flow: 1, head: 22 },
+  { flow: 2, head: 20 },
+  { flow: 3, head: 17 },
+  { flow: 4, head: 14 },
+  { flow: 5, head: 10 }
+];
+
+
 // 🔹 قاعدة بيانات مضخات (مبسطة)
 let pumps = [
   { name: "Pump A", flow: 1, head: 10 },
