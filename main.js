@@ -416,6 +416,8 @@ window.chart = new Chart(ctx, {
     }
   }
 }
+}
+  
   
 // 🔹 عرض النتائج
 document.getElementById("flow_rate").innerText = flow_zone.toFixed(2);
