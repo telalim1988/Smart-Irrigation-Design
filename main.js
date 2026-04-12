@@ -172,6 +172,39 @@ if (hf_ratio > 0.5) {
   recommendation = "Moderate losses: Consider optimizing pipe size";
 }
 
+  // 🔹 سرعات مقترحة
+let velocities = [0.6, 0.8, 1.0, 1.2, 1.5];
+
+let best_velocity = velocity;
+let best_diameter = diameter;
+let min_hf = hf;
+
+// 🔹 نجرب كل السرعات
+for (let v of velocities) {
+
+  let d_test = Math.sqrt((4 * flow_m3s) / (Math.PI * v));
+
+  let std_d = standard_diameters.find(d => d >= d_test);
+
+  if (!std_d) {
+    std_d = standard_diameters[standard_diameters.length - 1];
+  }
+
+  let hf_test = 10.67 * length * Math.pow(flow_m3s, 1.852) /
+                (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
+
+  // 🔥 نختار أقل فقد
+  if (hf_test < min_hf) {
+    min_hf = hf_test;
+    best_velocity = v;
+    best_diameter = std_d;
+  }
+}
+
+// 🔹 عرض النتائج
+document.getElementById("opt_velocity").innerText = best_velocity.toFixed(2);
+document.getElementById("opt_diameter").innerText = best_diameter.toFixed(3);
+
   
 // 🔹 عرض النتائج
 document.querySelectorAll(".box span")[0].innerText = flow_zone.toFixed(2);
