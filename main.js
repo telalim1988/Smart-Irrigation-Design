@@ -306,20 +306,20 @@ document.getElementById("power").innerText = power_kw.toFixed(3);
 
 document.getElementById("diameter").innerText = std_d.toFixed(3);
 
+// 🔹 STD DIAMETER
 document.getElementById("std_diameter").innerText = std_d.toFixed(3);
 
-document.getElementById("alerts").innerText = alertMessage;
-
-document.getElementById("recommendation").innerText = recommendation;
-
+// 🔹 OPTIMIZATION
 document.getElementById("opt_velocity").innerText = best_velocity.toFixed(2);
-
 document.getElementById("opt_diameter").innerText = best_diameter.toFixed(3);
 
+// 🔹 RECOMMENDATION
+document.getElementById("recommendation").innerText = recommendation;
+
+// 🔹 PUMP SELECTION
 document.getElementById("pump_select").innerText =
   "Flow: " + flow_pump.toFixed(2) +
   " | Head: " + tdh.toFixed(2);
-
 
   
 document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
