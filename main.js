@@ -291,20 +291,34 @@ for (let pump of pumps) {
 
   
 // 🔹 عرض النتائج
-document.querySelectorAll(".box span")[0].innerText = flow_zone.toFixed(2);
-document.querySelectorAll(".box span")[1].innerText = hf_std.toFixed(2);
-document.querySelectorAll(".box span")[2].innerText = tdh_std.toFixed(2);
-document.querySelectorAll(".box span")[3].innerText = power_kw.toFixed(4);
-document.querySelectorAll(".box span")[4].innerText = diameter.toFixed(3);
-document.getElementById("std_diameter").innerText = std_diameter.toFixed(3);
+document.getElementById("flow_rate").innerText = flow_zone.toFixed(2);
+document.getElementById("head_loss").innerText = hf.toFixed(2);
+document.getElementById("tdh").innerText = tdh.toFixed(2);
+
+document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
+
+document.getElementById("pump_head").innerText =
+  (pump_head !== null) ? pump_head.toFixed(2) : "Out";
+
+document.getElementById("pump_status").innerText = pump_status;
+
+document.getElementById("power").innerText = power_kw.toFixed(3);
+
+document.getElementById("diameter").innerText = std_d.toFixed(3);
+
+document.getElementById("std_diameter").innerText = std_d.toFixed(3);
+
 document.getElementById("alerts").innerText = alertMessage;
+
 document.getElementById("recommendation").innerText = recommendation;
+
 document.getElementById("opt_velocity").innerText = best_velocity.toFixed(2);
+
 document.getElementById("opt_diameter").innerText = best_diameter.toFixed(3);
+
 document.getElementById("pump_select").innerText =
-  best_pump.name +
-  " | Flow: " + best_pump.flow +
-  " m³/hr | Head: " + best_pump.head + " m";
+  "Flow: " + flow_pump.toFixed(2) +
+  " | Head: " + tdh.toFixed(2);
 
 
   
