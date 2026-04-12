@@ -136,16 +136,22 @@ let tdh_std = hf_std + elevation;
   // 🔹 حساب Head من منحنى المضخة
 let pump_head = interpolateHead(flow_pump, pump_curve);
 
-let pump_status = "";
+let pump_status = "UNKNOWN";
 
-// 🔴 مقارنة مع المطلوب
 if (pump_head === null) {
   pump_status = "❌ Flow outside pump curve";
-} else if (pump_head >= tdh_std) {
-  pump_status = "✔️ Pump Suitable";
+
+} else if (pump_head < tdh_std) {
+  pump_status = "❌ Pump NOT suitable (Head too low)";
+
 } else {
-  pump_status = "⚠️ Pump cannot meet required head";
+  pump_status = "✔️ Pump Suitable";
 }
+  
+document.getElementById("pump_head").innerText = 
+  pump_head ? pump_head.toFixed(2) : "Out";
+
+document.getElementById("pump_status").innerText = pump_status;
 
 // 🔹 حساب عدد النقاط
 let emitter_flow = parseFloat(document.getElementById("emitter_flow").value);
@@ -282,7 +288,6 @@ for (let pump of pumps) {
   }
 }
 
-// 🔹 عرض النتيجة
 
   
 // 🔹 عرض النتائج
@@ -332,8 +337,4 @@ function interpolateHead(flow, curve) {
   return null; // خارج المنحنى
 }
 
-document.getElementById("pump_head").innerText = 
-  pump_head ? pump_head.toFixed(2) : "Out";
-
-document.getElementById("pump_status").innerText = pump_status;
 
