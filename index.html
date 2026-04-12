@@ -77,6 +77,11 @@
   </select>
 </div>
 
+    <div class="card">
+  <h4>Energy</h4>
+  <input id="tariff" type="number" placeholder="Electricity Cost ($/kWh)">
+</div>
+
    <button class="run-btn" onclick="calculate()">RUN DESIGN</button>
 
   </div>
@@ -162,6 +167,16 @@
     <p>PUMP SELECTION</p>
     <span id="pump_select">---</span>
   </div>
+
+  <div class="box">
+  <p>ENERGY (kWh/day)</p>
+  <span id="energy">0</span>
+</div>
+
+<div class="box">
+  <p>COST ($/day)</p>
+  <span id="cost">0</span>
+</div>
 
 </div>
 
