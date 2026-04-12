@@ -169,7 +169,9 @@ if (!isNaN(emitter_flow)) {
 let efficiency_pump = 0.75;
 
 // 🔹 القدرة الهيدروليكية
-let power_watt = 1000 * 9.81 * flow_m3s * tdh;
+let flow_pump_m3s = flow_pump / 3600;
+
+let power_watt = 1000 * 9.81 * flow_pump_m3s * tdh_std;
 
 // 🔹 القدرة الفعلية
 let power_kw = (power_watt / efficiency_pump) / 1000;
@@ -319,7 +321,7 @@ document.getElementById("recommendation").innerText = recommendation;
 
 document.getElementById("pump_select").innerText =
   "Flow: " + flow_pump.toFixed(2) +
-  " | Head: " + tdh.toFixed(2);
+" | Head: " + tdh_std.toFixed(2);
   
 document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
 }
