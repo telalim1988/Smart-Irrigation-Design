@@ -51,6 +51,17 @@ let flow_zone = flow / zones;
 // 🔹 تحويل إلى m³/s
 let flow_m3s = flow_zone / 3600;
 
+  // 🔹 اختيار وضع التشغيل
+let mode = document.getElementById("mode").value;
+
+let flow_pump;
+
+if (mode === "zone") {
+  flow_pump = flow_zone;   // تشغيل قطاع واحد
+} else {
+  flow_pump = flow;        // تشغيل كامل النظام
+}
+
   // 🔹 قراءة السرعة
 let velocity = parseFloat(document.getElementById("velocity").value);
 
@@ -228,7 +239,7 @@ if (head_req < 10) {
 
   
 // 🔹 القيم المطلوبة
-let required_flow = flow_zone;
+let required_flow = flow_pump;
 let required_head = tdh_std;
 
 // 🔹 البحث عن أفضل Pump
