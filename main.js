@@ -525,6 +525,7 @@ document.getElementById("cost").innerText = cost.toFixed(2);
 document.getElementById("ai_result").innerText =
   "Save up to " + ((cost - best_cost)/cost * 100).toFixed(1) + "% energy";
   
+document.getElementById("bep_status").innerText = bep_status;
 document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
 }
 
