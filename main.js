@@ -715,7 +715,22 @@ function runAIEngine() {
   let elevation = parseFloat(document.getElementById("elevation").value);
   let hours = parseFloat(document.getElementById("hours").value);
   let tariff = parseFloat(document.getElementById("tariff").value);
+ // =========================
+// 🔹 MATERIAL → C VALUE
+// =========================
 
+let material = document.getElementById("material").value;
+
+let C;
+
+if (material === "pvc") {
+  C = 150;
+} else if (material === "hdpe") {
+  C = 140;
+} else if (material === "steel") {
+  C = 120;
+}
+  
   // 🔹 Water
   let ET0 = parseFloat(document.getElementById("et0").value);
   let Kc = parseFloat(document.getElementById("kc").value);
@@ -752,21 +767,6 @@ function runAIEngine() {
       let hf = 10.67 * length * Math.pow(flow_m3s, 1.852) /
                (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
 
-      // =========================
-// 🔹 MATERIAL → C VALUE
-// =========================
-
-let material = document.getElementById("material").value;
-
-let C;
-
-if (material === "pvc") {
-  C = 150;
-} else if (material === "hdpe") {
-  C = 140;
-} else if (material === "steel") {
-  C = 120;
-}
 
       let tdh = hf + elevation;
 
