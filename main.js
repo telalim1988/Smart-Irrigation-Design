@@ -647,7 +647,6 @@ document.getElementById("opt_zones").innerText = best_zone;
 
 
 
-
 function interpolateHead(flow, curve) {
 
   for (let i = 0; i < curve.length - 1; i++) {
@@ -676,5 +675,25 @@ function interpolateHead(flow, curve) {
   }
 
   return null;
+}
+
+
+function applyOptimization() {
+
+  let best_zone = document.getElementById("opt_zones").innerText;
+
+  if (best_zone === "---") {
+    alert("Run design first");
+    return;
+  }
+
+  // 🔹 تحويل إلى رقم
+  best_zone = parseInt(best_zone);
+
+  // 🔹 تحديث input
+  document.getElementById("zones").value = best_zone;
+
+  // 🔥 إعادة تشغيل الحساب
+  calculate();
 }
 
