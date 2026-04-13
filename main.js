@@ -97,6 +97,68 @@ let flow_zone = flow / zones;
 // 🔹 تحويل إلى m³/s
 let flow_m3s = flow_zone / 3600;
 
+    // =========================
+// 🔹 ZONE OPTIMIZATION
+// =========================
+
+let best_zone = 1;
+let best_zone_score = Infinity;
+
+for (let z = 1; z <= 6; z++) {
+
+  // 🔹 تقسيم التدفق
+  let flow_test = flow_zone * z; // total flow
+  let flow_per_zone = flow_test / z;
+
+  let flow_m3s_test = flow_per_zone / 3600;
+
+  // 🔹 قطر
+  let d_test = Math.sqrt((4 * flow_m3s_test) / (Math.PI * velocity));
+
+  let std_d = standard_diameters.find(d => d >= d_test);
+  if (!std_d) std_d = standard_diameters[standard_diameters.length - 1];
+
+  // 🔹 Head Loss
+  let hf_test = 10.67 * length * Math.pow(flow_m3s_test, 1.852) /
+                (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
+
+  let tdh_test = hf_test + elevation;
+
+  // 🔹 اختيار Pump
+  let best_pump_local = null;
+
+  for (let pump of pumps) {
+    let pump_head = interpolateHead(flow_per_zone, pump.curve);
+
+    if (pump_head >= tdh_test) {
+      best_pump_local = pump;
+      break;
+    }
+  }
+
+  if (!best_pump_local) continue;
+
+  // 🔹 Power
+  let power_test = (1000 * 9.81 * flow_m3s_test * tdh_test) / 1000 / 0.75;
+
+  let energy_test = power_test * hours;
+
+  // 🔹 BEP
+  let mid = Math.floor(best_pump_local.curve.length / 2);
+  let bep_flow = best_pump_local.curve[mid].flow;
+
+  let diff = Math.abs(flow_per_zone - bep_flow);
+
+  // 🔥 Score (Energy + BEP)
+  let score = energy_test + diff;
+
+  if (score < best_zone_score) {
+    best_zone_score = score;
+    best_zone = z;
+  }
+}
+
+
   // 🔹 اختيار وضع التشغيل
 let mode = document.getElementById("mode").value;
 
