@@ -126,3 +126,7 @@ input, select {
   transform: scale(1.02);
 }
 
+#comp_energy {
+  color: #00ff88;
+  font-weight: bold;
+}
