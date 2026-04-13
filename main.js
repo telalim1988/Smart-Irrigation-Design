@@ -700,6 +700,33 @@ function applyOptimization() {
 
 function runAIEngine() {
 
+  // =========================
+  // 🔹 READ INPUTS AGAIN
+  // =========================
+
+  let area = parseFloat(document.getElementById("area").value);
+  let zones = parseInt(document.getElementById("zones").value);
+  let velocity = parseFloat(document.getElementById("velocity").value);
+  let length = parseFloat(document.getElementById("length").value);
+  let elevation = parseFloat(document.getElementById("elevation").value);
+  let hours = parseFloat(document.getElementById("hours").value);
+  let tariff = parseFloat(document.getElementById("tariff").value);
+
+  // 🔹 Water
+  let ET0 = parseFloat(document.getElementById("et0").value);
+  let Kc = parseFloat(document.getElementById("kc").value);
+
+  // =========================
+  // 🔹 CALCULATE FLOW
+  // =========================
+
+  let water_req = ET0 * Kc; // mm/day
+
+  let total_flow = (water_req * area) / 1000; // m³/day
+
+  total_flow = total_flow / hours; // m³/hr
+  
+
   let best_config = null;
   let best_score = Infinity;
 
