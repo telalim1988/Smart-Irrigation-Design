@@ -169,7 +169,7 @@ let hf_std = 10.67 * length * Math.pow(flow_m3s, 1.852) /
 let tdh_std = hf_std + elevation;
 
   // 🔹 حساب Head من منحنى المضخة
-let pump_head = interpolateHead(Number(flow_pump), pump_curve);
+let pump_head = interpolateHead(flow_pump, best_pump.curve);
 
 let pump_status = "UNKNOWN";
 
@@ -398,10 +398,9 @@ for (let q = 0; q <= 5; q += 0.1) {
 // 🔹 BEP (Best Efficiency Point)
 // =========================
 
-let bep_index = Math.floor(pump_curve.length / 2);
-
-let bep_flow = pump_curve[bep_index].flow;
-let bep_head = pump_curve[bep_index].head;
+let bep_index = Math.floor(best_pump.curve.length / 2);
+let bep_flow = best_pump.curve[bep_index].flow;
+let bep_head = best_pump.curve[bep_index].head;;
   
 // =========================
 // 🔹 SYSTEM CURVE
