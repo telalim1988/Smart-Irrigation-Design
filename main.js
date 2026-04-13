@@ -362,33 +362,7 @@ if (head_req < 10) {
 let required_flow = flow_pump;
 let required_head = tdh_std;
 
-// =========================
-// 🔹 SELECT BEST PUMP
-// =========================
 
-let best_pump = null;
-let best_score = Infinity;
-
-for (let pump of pumps) {
-
-  // حساب BEP
-  let mid = Math.floor(pump.curve.length / 2);
-  let bep_flow = pump.curve[mid].flow;
-
-  // الفرق بين التشغيل و BEP
-  let diff = Math.abs(flow_pump - bep_flow);
-
-  // تحقق من قدرة المضخة
-  let pump_head = interpolateHead(flow_pump, pump.curve);
-
-  if (pump_head >= tdh) {
-
-    if (diff < best_score) {
-      best_score = diff;
-      best_pump = pump;
-    }
-  }
-}
 
 if (typeof std_d === "undefined") {
   console.error("std_d NOT DEFINED");
