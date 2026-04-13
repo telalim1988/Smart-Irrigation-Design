@@ -767,3 +767,30 @@ function runAIEngine() {
   return best_config;
 }
 
+function runFullAI() {
+
+  let result = runAIEngine();
+
+  if (!result) {
+    alert("❌ No optimal design found");
+    return;
+  }
+
+  // 🔥 تطبيق النتائج
+  document.getElementById("zones").value = result.zones;
+  document.getElementById("velocity").value = result.velocity;
+
+  // إعادة الحساب
+  calculate();
+
+  // عرض النتائج
+  document.getElementById("pump_select").innerText =
+    result.pump + " | Flow: " + result.flow.toFixed(2);
+
+  document.getElementById("opt_diameter").innerText =
+    result.diameter.toFixed(3);
+
+  document.getElementById("opt_zones").innerText =
+    result.zones;
+}
+
