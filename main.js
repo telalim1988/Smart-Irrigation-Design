@@ -448,7 +448,7 @@ window.chart = new Chart(ctx, {
   type: "scatter",
   pointRadius: 7,
   pointBackgroundColor: "green"
-}
+},
       {
         label: "System Curve",
         data: system_curve,
