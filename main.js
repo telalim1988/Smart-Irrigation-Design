@@ -580,7 +580,6 @@ document.getElementById("ai_result").innerText =
   
 document.getElementById("bep_status").innerText = bep_status;
 document.getElementById("pump_flow").innerText = flow_pump.toFixed(2);
-document.getElementById("opt_zones").innerText = best_zone;
 
 
 
