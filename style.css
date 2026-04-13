@@ -109,3 +109,20 @@ input, select {
   display: block;
 }
 
+.run-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.run-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.02);
+}
+
