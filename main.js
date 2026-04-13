@@ -697,3 +697,73 @@ function applyOptimization() {
   calculate();
 }
 
+
+function runAIEngine() {
+
+  let best_config = null;
+  let best_score = Infinity;
+
+  let velocities = [0.6, 0.8, 1.0, 1.2, 1.5];
+
+  for (let z = 1; z <= 6; z++) {
+    for (let v of velocities) {
+
+      let flow_per_zone = total_flow / z;
+      let flow_m3s = flow_per_zone / 3600;
+
+      // 🔹 Diameter
+      let d = Math.sqrt((4 * flow_m3s) / (Math.PI * v));
+
+      let std_d = standard_diameters.find(diam => diam >= d);
+      if (!std_d) std_d = standard_diameters[standard_diameters.length - 1];
+
+      // 🔹 Head Loss
+      let hf = 10.67 * length * Math.pow(flow_m3s, 1.852) /
+               (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
+
+      let tdh = hf + elevation;
+
+      // 🔹 Pump selection
+      for (let pump of pumps) {
+
+        let pump_head = interpolateHead(flow_per_zone, pump.curve);
+
+        if (pump_head === null) continue;
+
+        // 🔹 Power
+        let power = (1000 * 9.81 * flow_m3s * tdh) / 1000 / 0.75;
+
+        let energy = power * hours;
+
+        let cost = energy * tariff;
+
+        // 🔹 BEP
+        let mid = Math.floor(pump.curve.length / 2);
+        let bep = pump.curve[mid].flow;
+
+        let diff = Math.abs(flow_per_zone - bep);
+
+        // 🔥 Score
+        let score = cost + diff;
+
+        if (score < best_score) {
+          best_score = score;
+
+          best_config = {
+            zones: z,
+            velocity: v,
+            diameter: std_d,
+            pump: pump.name,
+            flow: flow_per_zone,
+            head: tdh,
+            energy: energy,
+            cost: cost
+          };
+        }
+      }
+    }
+  }
+
+  return best_config;
+}
+
