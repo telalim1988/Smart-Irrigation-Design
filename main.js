@@ -9,14 +9,49 @@ let pump_curve = [
 ];
 
 
-// 🔹 قاعدة بيانات مضخات (مبسطة)
-let pumps = [
-  { name: "Pump A", flow: 1, head: 10 },
-  { name: "Pump B", flow: 2, head: 20 },
-  { name: "Pump C", flow: 5, head: 30 },
-  { name: "Pump D", flow: 10, head: 40 }
-];
+// =========================
+// 🔹 PUMP LIBRARY
+// =========================
 
+let pumps = [
+
+  {
+    name: "Pump A",
+    curve: [
+      { flow: 0, head: 14 },
+      { flow: 2, head: 13 },
+      { flow: 4, head: 12 },
+      { flow: 6, head: 10 },
+      { flow: 8, head: 7 },
+      { flow: 10, head: 3 }
+    ]
+  },
+
+  {
+    name: "Pump B",
+    curve: [
+      { flow: 0, head: 18 },
+      { flow: 2, head: 17 },
+      { flow: 4, head: 15 },
+      { flow: 6, head: 13 },
+      { flow: 8, head: 10 },
+      { flow: 10, head: 6 }
+    ]
+  },
+
+  {
+    name: "Pump C",
+    curve: [
+      { flow: 0, head: 10 },
+      { flow: 2, head: 9 },
+      { flow: 4, head: 8 },
+      { flow: 6, head: 6 },
+      { flow: 8, head: 4 },
+      { flow: 10, head: 2 }
+    ]
+  }
+
+];
 
 function calculate() {
 
@@ -308,18 +343,31 @@ if (head_req < 10) {
 let required_flow = flow_pump;
 let required_head = tdh_std;
 
-// 🔹 البحث عن أفضل Pump
+// =========================
+// 🔹 SELECT BEST PUMP
+// =========================
+
 let best_pump = null;
-let min_error = Infinity;
+let best_score = Infinity;
 
 for (let pump of pumps) {
 
-  let error = Math.abs(pump.flow - required_flow) +
-              Math.abs(pump.head - required_head);
+  // حساب BEP
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep_flow = pump.curve[mid].flow;
 
-  if (error < min_error) {
-    min_error = error;
-    best_pump = pump;
+  // الفرق بين التشغيل و BEP
+  let diff = Math.abs(flow_pump - bep_flow);
+
+  // تحقق من قدرة المضخة
+  let pump_head = interpolateHead(flow_pump, pump.curve);
+
+  if (pump_head >= tdh) {
+
+    if (diff < best_score) {
+      best_score = diff;
+      best_pump = pump;
+    }
   }
 }
 
@@ -512,9 +560,18 @@ document.getElementById("opt_diameter").innerText = best_diameter.toFixed(3);
 
 document.getElementById("recommendation").innerText = recommendation;
 
-document.getElementById("pump_select").innerText =
-  "Flow: " + flow_pump.toFixed(2) +
-" | Head: " + tdh_std.toFixed(2);
+if (best_pump) {
+
+  document.getElementById("pump_select").innerText =
+    best_pump.name +
+    " | Flow: " + flow_pump.toFixed(2) +
+    " | Head: " + tdh.toFixed(2);
+
+} else {
+
+  document.getElementById("pump_select").innerText =
+    "❌ No Suitable Pump";
+}
   
 document.getElementById("recommendation").innerText =
   "💡 Best Design → " + best_config +
