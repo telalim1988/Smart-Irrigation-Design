@@ -644,7 +644,19 @@ for (let z = 1; z <= 6; z++) {
 
 // 🔹 عرض فقط (لا تغير النظام)
 document.getElementById("opt_zones").innerText = best_zone;
+
   
+  // =========================
+// 🔹 SAVE CURRENT DESIGN
+// =========================
+
+window.current_design = {
+  zones: parseInt(document.getElementById("zones").value),
+  velocity: parseFloat(document.getElementById("velocity").value),
+  diameter: std_diameter,
+  pump: document.getElementById("pump_select").innerText,
+  energy: energy
+};
 }
 
 
@@ -817,6 +829,11 @@ if (material === "pvc") {
 function runFullAI() {
 
   let result = runAIEngine();
+  // =========================
+// 🔹 SAVE AI DESIGN
+// =========================
+
+window.ai_design = result;
 
   if (!result) {
     alert("❌ No optimal design found");
