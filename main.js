@@ -345,6 +345,16 @@ for (let q = 0; q <= 5; q += 0.1) {
   curve_flow.push(q);
   curve_head.push(interpolateHead(q, pump_curve));
 }
+  
+// =========================
+// 🔹 BEP (Best Efficiency Point)
+// =========================
+
+let bep_index = Math.floor(pump_curve.length / 2);
+
+let bep_flow = pump_curve[bep_index].flow;
+let bep_head = pump_curve[bep_index].head;
+  
 // =========================
 // 🔹 SYSTEM CURVE
 // =========================
@@ -392,6 +402,22 @@ y: intersection_head
 if (window.chart) {
   window.chart.destroy();
 }
+
+  // =========================
+// 🔹 BEP ANALYSIS
+// =========================
+
+let diff_flow = Math.abs(flow_pump - bep_flow);
+
+let bep_status = "";
+
+if (diff_flow < 1) {
+  bep_status = "✔️ Near BEP (Optimal)";
+} else if (diff_flow < 2) {
+  bep_status = "⚠️ Acceptable";
+} else {
+  bep_status = "❌ Far from BEP";
+}
 // =========================
 // 🔹 UPDATE REAL VALUES
 // =========================
@@ -413,6 +439,16 @@ window.chart = new Chart(ctx, {
         fill: false,
         borderColor: "orange"
       },
+      {
+  label: "BEP",
+  data: [{
+    x: bep_flow,
+    y: bep_head
+  }],
+  type: "scatter",
+  pointRadius: 7,
+  pointBackgroundColor: "green"
+}
       {
         label: "System Curve",
         data: system_curve,
