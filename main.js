@@ -826,6 +826,8 @@ if (material === "pvc") {
   return best_config;
 }
 
+
+
 function runFullAI() {
 
   let result = runAIEngine();
@@ -856,5 +858,32 @@ window.ai_design = result;
 
   document.getElementById("opt_zones").innerText =
     result.zones;
+
+  // =========================
+// 🔹 DISPLAY COMPARISON
+// =========================
+
+let before = window.current_design;
+let after = window.ai_design;
+
+if (before && after) {
+
+  document.getElementById("comp_zones").innerText =
+    before.zones + " → " + after.zones;
+
+  document.getElementById("comp_velocity").innerText =
+    before.velocity + " → " + after.velocity;
+
+  document.getElementById("comp_diameter").innerText =
+    before.diameter.toFixed(3) + " → " + after.diameter.toFixed(3);
+
+  document.getElementById("comp_pump").innerText =
+    before.pump + " → " + after.pump;
+
+  let saving = ((before.energy - after.energy) / before.energy) * 100;
+
+  document.getElementById("comp_energy").innerText =
+    saving.toFixed(1) + "% Saving 🔥";
+}
 }
 
