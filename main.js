@@ -168,7 +168,40 @@ let hf_std = 10.67 * length * Math.pow(flow_m3s, 1.852) /
 // 🔹 TDH جديد
 let tdh_std = hf_std + elevation;
 
-  // 🔹 حساب Head من منحنى المضخة
+// =========================
+// 🔹 SELECT BEST PUMP (لازم يكون هنا قبل أي استخدام)
+// =========================
+let best_pump = null;
+let best_score = Infinity;
+
+for (let pump of pumps) {
+
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep_flow = pump.curve[mid].flow;
+
+  let diff = Math.abs(flow_pump - bep_flow);
+
+  let pump_head_test = interpolateHead(flow_pump, pump.curve);
+
+  if (pump_head_test >= tdh_std) {
+    if (diff < best_score) {
+      best_score = diff;
+      best_pump = pump;
+    }
+  }
+}
+
+// 🔴 مهم جدًا
+if (!best_pump) {
+  alert("❌ No suitable pump found");
+  return;
+}
+
+// =========================
+// 🔹 الآن فقط نستخدم best_pump
+// =========================
+
+// 🔹 حساب Head من منحنى المضخة
 let pump_head = interpolateHead(flow_pump, best_pump.curve);
 
 let pump_status = "UNKNOWN";
@@ -182,13 +215,15 @@ if (pump_head === null) {
 } else {
   pump_status = "✔️ Pump Suitable";
 }
-  
-document.getElementById("pump_head").innerText = 
+
+document.getElementById("pump_head").innerText =
   (pump_head !== null) ? pump_head.toFixed(2) : "Out";
-  
+
 document.getElementById("pump_status").innerText = pump_status;
 
+// =========================
 // 🔹 حساب عدد النقاط
+// =========================
 let emitter_flow = parseFloat(document.getElementById("emitter_flow").value);
 
 if (!isNaN(emitter_flow)) {
@@ -200,52 +235,38 @@ if (!isNaN(emitter_flow)) {
   console.log("Number of Emitters:", emitters.toFixed(0));
 }
 
-// 🔹 كفاءة المضخة
+// =========================
+// 🔹 POWER
+// =========================
 let efficiency_pump = 0.75;
 
-// 🔹 القدرة الهيدروليكية
 let flow_pump_m3s = flow_pump / 3600;
 
 let power_watt = 1000 * 9.81 * flow_pump_m3s * tdh_std;
 
-// 🔹 القدرة الفعلية
 let power_kw = (power_watt / efficiency_pump) / 1000;
 
-  // =========================
-// 🔹 ENERGY CALCULATION
 // =========================
-
+// 🔹 ENERGY
+// =========================
 let tariff = parseFloat(document.getElementById("tariff").value);
 
 if (isNaN(tariff)) {
-  tariff = 0.1; // default
+  tariff = 0.1;
 }
 
-// kWh/day
 let energy = power_kw * hours;
-
-// cost/day
 let cost = energy * tariff;
 
-// 🔹 Alerts
+// =========================
+// 🔹 ALERTS
+// =========================
 let alertMessage = "OK";
 
-// Velocity
-if (velocity < 0.6) {
-  alertMessage = "⚠️ Low Velocity";
-}
+if (velocity < 0.6) alertMessage = "⚠️ Low Velocity";
+if (velocity > 2) alertMessage = "⚠️ High Velocity";
 
-if (velocity > 2) {
-  alertMessage = "⚠️ High Velocity";
-}
-
-// Diameter
-if (diameter < 0.02) {
-  alertMessage = "⚠️ Pipe Too Small";
-}
-
-// Head Loss
-let hf_ratio = hf / tdh;
+let hf_ratio = hf_std / tdh_std;
 
 if (hf_ratio > 0.5) {
   alertMessage = "❌ High Head Loss";
@@ -253,40 +274,40 @@ if (hf_ratio > 0.5) {
   alertMessage = "⚠️ Moderate Head Loss";
 }
 
-  let recommendation = "✔️ Design is Good";
+// =========================
+// 🔹 RECOMMENDATION
+// =========================
+let recommendation = "✔️ Design is Good";
 
-// 🔴 Diameter Recommendation
-if (diameter < 0.02) {
-  recommendation = "Increase pipe diameter to reduce losses";
+if (std_diameter < 0.02) {
+  recommendation = "Increase pipe diameter";
 }
 
-// 🔴 Velocity Recommendation
 if (velocity > 2) {
-  recommendation = "Reduce velocity to avoid high friction losses";
+  recommendation = "Reduce velocity";
 }
 
 if (velocity < 0.6) {
-  recommendation = "Increase velocity to avoid sedimentation";
+  recommendation = "Increase velocity";
 }
 
-// 🔴 Head Loss Recommendation
 if (hf_ratio > 0.5) {
-  recommendation = "System inefficient: Increase pipe diameter";
+  recommendation = "System inefficient: Increase diameter";
 } else if (hf_ratio > 0.3) {
-  recommendation = "Moderate losses: Consider optimizing pipe size";
+  recommendation = "Moderate losses: Optimize pipe size";
 }
 
-  // 🔹 سرعات مقترحة
+// =========================
+// 🔹 OPTIMIZATION
+// =========================
 let velocities = [0.6, 0.8, 1.0, 1.2, 1.5];
 
 let best_velocity = velocity;
 let best_diameter = std_diameter;
-let min_hf = hf;
 let best_energy = Infinity;
 let best_cost = Infinity;
 let best_config = "";
 
-// 🔹 نجرب كل السرعات
 for (let v of velocities) {
 
   let d_test = Math.sqrt((4 * flow_m3s) / (Math.PI * v));
@@ -302,7 +323,6 @@ for (let v of velocities) {
 
   let tdh_test = hf_test + elevation;
 
-  // 🔹 حساب الطاقة لكل خيار
   let flow_test_m3s = flow_pump / 3600;
 
   let power_test = (1000 * 9.81 * flow_test_m3s * tdh_test) / 1000 / 0.75;
@@ -311,7 +331,6 @@ for (let v of velocities) {
 
   let cost_test = energy_test * tariff;
 
-  // 🔥 اختيار الأقل تكلفة
   if (cost_test < best_cost) {
     best_cost = cost_test;
     best_energy = energy_test;
