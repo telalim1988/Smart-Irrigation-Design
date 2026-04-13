@@ -97,6 +97,8 @@ let flow_zone = flow / zones;
 // 🔹 تحويل إلى m³/s
 let flow_m3s = flow_zone / 3600;
 
+console.log("FLOW_ZONE:", flow_zone);
+
    
   // 🔹 اختيار وضع التشغيل
 let mode = document.getElementById("mode").value;
