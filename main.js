@@ -902,7 +902,6 @@ function generateReport() {
   // =========================
   // 🔹 تعبئة البيانات
   // =========================
-
   document.getElementById("rep_project").innerHTML = `
     <b>Area:</b> ${document.getElementById("area").value} m²<br>
     <b>Zones:</b> ${document.getElementById("zones").value}<br>
@@ -930,11 +929,11 @@ function generateReport() {
   // =========================
   // 🔹 Chart
   // =========================
-  let canvas = document.getElementById("myChart");
+  let chartCanvas = document.getElementById("myChart");
 
-  if (canvas && canvas.toDataURL) {
-    let img = canvas.toDataURL("image/png");
-    document.getElementById("rep_chart").src = img;
+  if (chartCanvas && chartCanvas.toDataURL) {
+    document.getElementById("rep_chart").src =
+      chartCanvas.toDataURL("image/png");
   }
 
   // =========================
@@ -944,60 +943,40 @@ function generateReport() {
     new Date().toLocaleDateString();
 
   // =========================
-  // 🔥 CLONE (الحل السحري)
+  // 🔥 CLONE
   // =========================
-
   let report = document.getElementById("report");
-
-  let logo = document.getElementById("rep_logo");
-
-let img = new Image();
-img.crossOrigin = "anonymous";
-img.src = "logo.png";
-
-img.onload = function () {
-  let canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-
-  let ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
-
-  let base64 = canvas.toDataURL("image/png");
-
-  logo.src = base64;
-
-  generatePDF(); // نكمل بعد التحويل
-};
-
   let clone = report.cloneNode(true);
 
   clone.style.display = "block";
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
-  clone.style.top = "0";
 
   document.body.appendChild(clone);
 
   // =========================
-  // 🔹 EXPORT PDF
+  // 🔥 EXPORT PDF
   // =========================
+  html2pdf().set({
+    margin: 10,
+    filename: "HydroSmart_Report.pdf",
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
+    },
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
+    }
+  }).from(clone).save()
+    .then(() => {
+      document.body.removeChild(clone);
+    });
+}
 
-html2pdf().set({
-  margin: 10,
-  filename: "HydroSmart_Report.pdf",
-  html2canvas: {
-    scale: 2,
-    useCORS: true,
-    allowTaint: true,
-    logging: true
-  },
-  jsPDF: {
-    unit: "mm",
-    format: "a4",
-    orientation: "portrait"
-  }
-}).from(clone).save();
+
 // =========================
 // 🔹 PDF GENERATOR (ضعه هنا)
 // =========================
