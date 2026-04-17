@@ -968,7 +968,7 @@ function generatePDF() {
     orientation: "portrait"
   }
 }).from(clone).save();
-    });
-}
+    }
+
 
 
