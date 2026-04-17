@@ -889,6 +889,13 @@ if (before && after) {
 
 function generateReport() {
 
+  let flow = document.getElementById("pump_flow").innerText;
+
+if (flow === "0" || flow === "---") {
+  alert("⚠️ Run design first");
+  return;
+}
+
   // =========================
   // 🔹 تعبئة البيانات
   // =========================
