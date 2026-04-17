@@ -949,6 +949,27 @@ function generateReport() {
 
   let report = document.getElementById("report");
 
+  let logo = document.getElementById("rep_logo");
+
+let img = new Image();
+img.crossOrigin = "anonymous";
+img.src = "logo.png";
+
+img.onload = function () {
+  let canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  let ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+
+  let base64 = canvas.toDataURL("image/png");
+
+  logo.src = base64;
+
+  generatePDF(); // نكمل بعد التحويل
+};
+
   let clone = report.cloneNode(true);
 
   clone.style.display = "block";
@@ -963,6 +984,36 @@ function generateReport() {
   // =========================
 
   html2pdf().from(clone).save("HydroSmart_Report.pdf")
+    .then(() => {
+      document.body.removeChild(clone); // تنظيف
+    });
+}
+
+// =========================
+// 🔹 PDF GENERATOR (ضعه هنا)
+// =========================
+
+function generatePDF() {
+
+  let report = document.getElementById("report");
+
+  // 🔥 إنشاء نسخة
+  let clone = report.cloneNode(true);
+
+  clone.style.display = "block";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  clone.style.top = "0";
+
+  document.body.appendChild(clone);
+
+  // 🔹 تصدير
+  html2pdf().set({
+    margin: 10,
+    filename: "HydroSmart_Report.pdf",
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+  }).from(clone).save()
     .then(() => {
       document.body.removeChild(clone); // تنظيف
     });
