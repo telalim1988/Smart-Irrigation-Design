@@ -160,3 +160,13 @@ input, select {
   font-size: 20px;
   font-weight: bold;
 }
+
+#report h2 {
+  margin-top: 15px;
+}
+
+#report div {
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 6px;
+}
