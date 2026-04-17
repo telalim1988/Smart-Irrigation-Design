@@ -941,39 +941,39 @@ function generateReport() {
   // =========================
   document.getElementById("rep_date").innerText =
     new Date().toLocaleDateString();
-
- 
-}
-
-
-// =========================
-// 🔹 PDF GENERATOR (ضعه هنا)
-// =========================
-
-
-   
-function generatePDF() {
-
+ // =========================
+  // 🔥 CLONE
+  // =========================
   let report = document.getElementById("report");
-
-  // 🔥 إنشاء نسخة
   let clone = report.cloneNode(true);
 
   clone.style.display = "block";
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
-  clone.style.top = "0";
 
   document.body.appendChild(clone);
 
-  // 🔹 تصدير
+  // =========================
+  // 🔥 EXPORT PDF
+  // =========================
   html2pdf().set({
     margin: 10,
     filename: "HydroSmart_Report.pdf",
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
+    },
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
+    }
   }).from(clone).save()
     .then(() => {
-      document.body.removeChild(clone); // تنظيف
+      document.body.removeChild(clone);
     });
+ 
 }
+
+
