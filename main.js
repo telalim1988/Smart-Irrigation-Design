@@ -997,11 +997,8 @@ img.onload = function () {
     format: "a4",
     orientation: "portrait"
   }
-}).from(clone).save();
-    .then(() => {
-      document.body.removeChild(clone); // تنظيف
-    });
-
+}).
+ 
 
 // =========================
 // 🔹 PDF GENERATOR (ضعه هنا)
