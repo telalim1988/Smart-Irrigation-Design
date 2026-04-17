@@ -944,17 +944,19 @@ if (canvas && canvas.toDataURL) {
   // =========================
   // 🔹 إظهار التقرير مؤقتًا
   // =========================
-  let report = document.getElementById("report");
-  report.style.display = "block";
+ let report = document.getElementById("report");
 
-  // =========================
-  // 🔹 تحويل PDF
-  // =========================
+// إظهار
+report.style.display = "block";
+
+// انتظار
+setTimeout(() => {
+
   html2pdf().from(report).save("HydroSmart_Report.pdf");
 
-  // =========================
-  // 🔹 إخفاء مرة أخرى
-  // =========================
   report.style.display = "none";
+
+}, 500);
+
 }
 
