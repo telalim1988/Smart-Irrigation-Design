@@ -983,7 +983,7 @@ img.onload = function () {
   // 🔹 EXPORT PDF
   // =========================
 
- html2pdf().set({
+html2pdf().set({
   margin: 10,
   filename: "HydroSmart_Report.pdf",
   html2canvas: {
@@ -996,9 +996,8 @@ img.onload = function () {
     unit: "mm",
     format: "a4",
     orientation: "portrait"
-}),
- }
-
+  }
+}).from(clone).save();
 // =========================
 // 🔹 PDF GENERATOR (ضعه هنا)
 // =========================
