@@ -889,39 +889,42 @@ if (before && after) {
 
 function generateReport() {
 
+  // =========================
+  // 🔹 تحقق
+  // =========================
   let flow = document.getElementById("pump_flow").innerText;
 
-if (flow === "0" || flow === "---") {
-  alert("⚠️ Run design first");
-  return;
-}
+  if (flow === "0" || flow === "---") {
+    alert("⚠️ Run design first");
+    return;
+  }
 
   // =========================
   // 🔹 تعبئة البيانات
   // =========================
 
   document.getElementById("rep_project").innerHTML = `
-    Area: ${document.getElementById("area").value} m²<br>
-    Zones: ${document.getElementById("zones").value}<br>
-    Emitter: ${document.getElementById("emitter_flow").value} L/hr<br>
-    Hours: ${document.getElementById("hours").value}
+    <b>Area:</b> ${document.getElementById("area").value} m²<br>
+    <b>Zones:</b> ${document.getElementById("zones").value}<br>
+    <b>Emitter:</b> ${document.getElementById("emitter_flow").value} L/hr<br>
+    <b>Hours:</b> ${document.getElementById("hours").value}
   `;
 
   document.getElementById("rep_results").innerHTML = `
-    Flow: ${document.getElementById("pump_flow").innerText} m³/hr<br>
-    Head: ${document.getElementById("pump_head").innerText} m<br>
-    Energy: ${document.getElementById("energy").innerText} kWh/day
+    <b>Flow:</b> ${document.getElementById("pump_flow").innerText} m³/hr<br>
+    <b>Head:</b> ${document.getElementById("pump_head").innerText} m<br>
+    <b>Energy:</b> ${document.getElementById("energy").innerText} kWh/day
   `;
 
   document.getElementById("rep_pump").innerHTML = `
     ${document.getElementById("pump_select").innerText}<br>
-    Status: ${document.getElementById("pump_status").innerText}
+    <b>Status:</b> ${document.getElementById("pump_status").innerText}
   `;
 
   document.getElementById("rep_ai").innerHTML = `
-    Optimal Zones: ${document.getElementById("opt_zones").innerText}<br>
-    Diameter: ${document.getElementById("opt_diameter").innerText}<br>
-    Velocity: ${document.getElementById("opt_velocity").innerText}
+    <b>Optimal Zones:</b> ${document.getElementById("opt_zones").innerText}<br>
+    <b>Diameter:</b> ${document.getElementById("opt_diameter").innerText}<br>
+    <b>Velocity:</b> ${document.getElementById("opt_velocity").innerText}
   `;
 
   // =========================
@@ -929,34 +932,38 @@ if (flow === "0" || flow === "---") {
   // =========================
   let canvas = document.getElementById("myChart");
 
-if (canvas && canvas.toDataURL) {
-  let img = canvas.toDataURL("image/png");
-  document.getElementById("rep_chart").src = img;
-} else {
-  console.log("Chart not ready");
-}
+  if (canvas && canvas.toDataURL) {
+    let img = canvas.toDataURL("image/png");
+    document.getElementById("rep_chart").src = img;
+  }
 
   // =========================
   // 🔹 Date
   // =========================
-  document.getElementById("rep_date").innerText = new Date().toLocaleDateString();
+  document.getElementById("rep_date").innerText =
+    new Date().toLocaleDateString();
 
   // =========================
-  // 🔹 إظهار التقرير مؤقتًا
+  // 🔥 CLONE (الحل السحري)
   // =========================
- let report = document.getElementById("report");
 
-// إظهار
-report.style.display = "block";
+  let report = document.getElementById("report");
 
-// انتظار
-setTimeout(() => {
+  let clone = report.cloneNode(true);
 
-  html2pdf().from(report).save("HydroSmart_Report.pdf");
+  clone.style.display = "block";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  clone.style.top = "0";
 
-  report.style.display = "none";
+  document.body.appendChild(clone);
 
-}, 500);
+  // =========================
+  // 🔹 EXPORT PDF
+  // =========================
 
+  html2pdf().from(clone).save("HydroSmart_Report.pdf")
+    .then(() => {
+      document.body.removeChild(clone); // تنظيف
+    });
 }
-
