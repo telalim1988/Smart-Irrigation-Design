@@ -921,8 +921,13 @@ function generateReport() {
   // 🔹 Chart
   // =========================
   let canvas = document.getElementById("myChart");
+
+if (canvas && canvas.toDataURL) {
   let img = canvas.toDataURL("image/png");
   document.getElementById("rep_chart").src = img;
+} else {
+  console.log("Chart not ready");
+}
 
   // =========================
   // 🔹 Date
