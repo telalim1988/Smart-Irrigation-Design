@@ -983,7 +983,21 @@ img.onload = function () {
   // 🔹 EXPORT PDF
   // =========================
 
-  html2pdf().from(clone).save("HydroSmart_Report.pdf")
+ html2pdf().set({
+  margin: 10,
+  filename: "HydroSmart_Report.pdf",
+  html2canvas: {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    logging: true
+  },
+  jsPDF: {
+    unit: "mm",
+    format: "a4",
+    orientation: "portrait"
+  }
+}).from(clone).save();
     .then(() => {
       document.body.removeChild(clone); // تنظيف
     });
