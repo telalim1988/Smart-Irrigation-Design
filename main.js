@@ -1001,7 +1001,7 @@ img.onload = function () {
     .then(() => {
       document.body.removeChild(clone); // تنظيف
     });
-}
+
 
 // =========================
 // 🔹 PDF GENERATOR (ضعه هنا)
