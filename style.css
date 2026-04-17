@@ -170,3 +170,11 @@ input, select {
   padding: 10px;
   border-radius: 6px;
 }
+
+.rep-box {
+  background: #f1f5f9;
+  padding: 12px;
+  margin-top: 10px;
+  border-left: 4px solid #0072ff;
+  border-radius: 6px;
+}
