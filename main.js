@@ -996,14 +996,15 @@ img.onload = function () {
     unit: "mm",
     format: "a4",
     orientation: "portrait"
-  }
-}).
+}),
  
 
 // =========================
 // 🔹 PDF GENERATOR (ضعه هنا)
 // =========================
 
+
+   
 function generatePDF() {
 
   let report = document.getElementById("report");
