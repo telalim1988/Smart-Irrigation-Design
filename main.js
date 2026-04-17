@@ -953,14 +953,12 @@ function generatePDF() {
 
   document.body.appendChild(clone);
 
-  html2pdf().set({
+ html2pdf().set({
   margin: 10,
   filename: "HydroSmart_Report.pdf",
   html2canvas: {
     scale: 2,
-    useCORS: true,
-    allowTaint: true,
-    ignoreElements: (el) => el.tagName === "IMG" && el.id !== "rep_chart"
+    ignoreElements: (el) => el.tagName === "IMG"
   },
   jsPDF: {
     unit: "mm",
