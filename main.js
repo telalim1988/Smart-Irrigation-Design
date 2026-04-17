@@ -954,13 +954,20 @@ function generatePDF() {
   document.body.appendChild(clone);
 
   html2pdf().set({
-    margin: 10,
-    filename: "HydroSmart_Report.pdf",
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-  }).from(clone).save()
-    .then(() => {
-      document.body.removeChild(clone);
+  margin: 10,
+  filename: "HydroSmart_Report.pdf",
+  html2canvas: {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    ignoreElements: (el) => el.tagName === "IMG" && el.id !== "rep_chart"
+  },
+  jsPDF: {
+    unit: "mm",
+    format: "a4",
+    orientation: "portrait"
+  }
+}).from(clone).save();
     });
 }
 
