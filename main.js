@@ -510,7 +510,6 @@ function runAIEngine(input) {
   return best;
 }
 
-
 function runFullAI() {
 
   let input = getInputs();
@@ -530,6 +529,7 @@ function runFullAI() {
   setText("comp_energy", result.energy.energy.toFixed(2));
   
 }
+
 
 // =========================
 // 🔹 UI
