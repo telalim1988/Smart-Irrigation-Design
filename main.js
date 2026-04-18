@@ -375,76 +375,133 @@ function drawFullCurve(pump, flow, hyd, input) {
   let ctx = document.getElementById("pumpChart");
   if (!ctx) return;
 
-  let pumpFlows = pump.curve.map(p => p.flow);
-  let pumpHeads = pump.curve.map(p => p.head);
+  // =========================
+  // 🔹 Pump Curve (XY)
+  // =========================
+  let pumpData = pump.curve.map(p => ({
+    x: p.flow,
+    y: p.head
+  }));
+
+  // 🔹 BEP (منتصف المنحنى)
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
 
+  // =========================
+  // 🔹 System Curve
+  // =========================
   let system = generateSystemCurve(flow, input);
 
+  let systemData = system.Qs.map((q, i) => ({
+    x: q,
+    y: system.Hs[i]
+  }));
+
+  // =========================
+  // 🔹 Operating Point
+  // =========================
   let op = findOperatingPoint(pump, system);
 
+  let opData = op ? [{
+    x: op.flow,
+    y: op.head
+  }] : [];
+
+  // =========================
+  // 🔹 BEP Point
+  // =========================
+  let bepData = [{
+    x: bep.flow,
+    y: bep.head
+  }];
+
+  // =========================
+  // 🔹 Destroy old chart
+  // =========================
   if (pumpChart) pumpChart.destroy();
 
+  // =========================
+  // 🔹 Create Chart
+  // =========================
   pumpChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: system.Qs,
-     datasets: [
+      datasets: [
 
-  // Pump Curve
-  {
-    label: 'Pump Curve',
-    data: pump.curve.map(p => ({ x: p.flow, y: p.head }))
-    borderWidth: 3,
-    tension: 0.3
-  },
+        // 🔵 Pump Curve
+        {
+          label: 'Pump Curve',
+          data: pumpData,
+          borderWidth: 3,
+          tension: 0.3,
+          parsing: false
+        },
 
-  // System Curve
-  {
-    label: 'System Curve',
-    data: system.Hs,
-    borderWidth: 3,
-    borderDash: [5, 5],
-    tension: 0.3
-  },
+        // 🟡 System Curve
+        {
+          label: 'System Curve',
+          data: systemData,
+          borderWidth: 3,
+          borderDash: [6, 6],
+          tension: 0.3,
+          parsing: false
+        },
 
-  // Operating Point
-  {
-    label: 'Operating Point',
-    data: system.Qs.map(q =>
-      op && Math.abs(q - op.flow) < 0.2 ? op.head : null
-    ),
-    pointRadius: 7,
-    showLine: false
-  },
+        // 🔴 Operating Point
+        {
+          label: 'Operating Point',
+          data: opData,
+          pointRadius: 7,
+          pointBackgroundColor: 'red',
+          showLine: false,
+          parsing: false
+        },
 
-  // 🔥 BEP (هنا بالضبط)
-  {
-    label: 'BEP',
-    data: system.Qs.map(q =>
-      Math.abs(q - bep.flow) < 0.2 ? bep.head : null
-    ),
-    pointRadius: 6,
-    showLine: false
-  },
+        // 🟢 BEP
+        {
+          label: 'BEP',
+          data: bepData,
+          pointRadius: 6,
+          pointBackgroundColor: 'green',
+          showLine: false,
+          parsing: false
+        }
 
-]
+      ]
+    },
+
     options: {
       responsive: true,
+
       plugins: {
-        legend: { labels: { color: '#fff' } }
+        legend: {
+          labels: { color: '#fff' }
+        }
       },
+
       scales: {
+
         x: {
-          title: { display: true, text: 'Flow (m³/hr)', color: '#fff' },
+          type: 'linear',   // 🔥 مهم جدًا (XY mode)
+          title: {
+            display: true,
+            text: 'Flow (m³/hr)',
+            color: '#fff'
+          },
           ticks: { color: '#fff' }
         },
+
         y: {
-          title: { display: true, text: 'Head (m)', color: '#fff' },
+          title: {
+            display: true,
+            text: 'Head (m)',
+            color: '#fff'
+          },
           ticks: { color: '#fff' }
         }
+
       }
     }
   });
+}
 
