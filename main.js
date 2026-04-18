@@ -63,9 +63,8 @@ function calculate() {
 
   let energy = calculateEnergy(hyd, flow, input);
   let opt = optimizeSystem(input, flow);
-
-  updateUI(flow, hyd, pump, energy, opt);
-
+  updateUI(flow, hyd, pump, energy, opt, input);
+  drawFullCurve(pump, flow, hyd, input);
   // حفظ التصميم
   window.current_design = {
     zones: input.zones,
@@ -74,8 +73,7 @@ function calculate() {
     pump: pump.name,
     energy: energy.energy
   };
-  updateUI(flow, hyd, pump, energy, opt, input);
-  drawFullCurve(pump, flow, hyd, input);
+
 }
 
 // =========================
