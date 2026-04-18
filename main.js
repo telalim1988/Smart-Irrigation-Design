@@ -74,7 +74,7 @@ function calculate() {
     pump: pump.name,
     energy: energy.energy
   };
-
+  updateUI(flow, hyd, pump, energy, opt, input);
   drawFullCurve(pump, flow, hyd, input);
 }
 
@@ -176,119 +176,6 @@ function selectPump(hyd, flow) {
   }
 
   return best;
-}
-
-// =========================
-// 🔹 ENERGY
-// =========================
-
-function calculateEnergy(hyd, flow, input) {
-
-  let Q = flow.per_zone / 3600;
-
-  let power = (1000 * 9.81 * Q * hyd.tdh) / 1000 / 0.75;
-
-  let energy = power * input.hours;
-
-  return {
-    power,
-    energy,
-    cost: energy * input.tariff
-  };
-}
-
-// =========================
-// 🔹 OPTIMIZATION
-// =========================
-
-function optimizeSystem(input, flow) {
-
-  let best = { cost: Infinity };
-
-  let velocities = [0.6, 0.8, 1.0, 1.2];
-
-  for (let v of velocities) {
-
-    let d = Math.sqrt((4 * flow.m3s) / (Math.PI * v));
-
-    let std_d = standard_diameters.find(x => x >= d);
-
-    if (!std_d) continue;
-
-    let cost = std_d * 100;
-
-    if (cost < best.cost) {
-      best = { velocity: v, diameter: std_d, cost };
-    }
-  }
-
-  return best;
-}
-
-// =========================
-// 🔹 UI
-// =========================
-
-function updateUI(flow, hyd, pump, energy, opt) {
-
-  // 🔹 Process
-  document.getElementById("flow_zone").innerText = flow.per_zone.toFixed(2);
-  document.getElementById("head_loss").innerText = hyd.hf.toFixed(2);
-  document.getElementById("tdh").innerText = hyd.tdh.toFixed(2);
-
-  // 🔹 Pump
-  document.getElementById("pump_flow").innerText = flow.per_zone.toFixed(2);
-
-  let pump_head = interpolateHead(flow.per_zone, pump.curve);
-  document.getElementById("pump_head").innerText = pump_head.toFixed(2);
-
-  // 🔹 Pump Status
-  let status = (pump_head >= hyd.tdh) 
-    ? "✔️ Pump Suitable" 
-    : "❌ Not Suitable";
-
-  document.getElementById("pump_status").innerText = status;
-
-  // 🔹 Power & Energy
-  document.getElementById("power").innerText = energy.power.toFixed(2);
-  document.getElementById("energy").innerText = energy.energy.toFixed(2);
-  document.getElementById("cost").innerText = energy.cost.toFixed(2);
-
-  // 🔹 Diameter
-  document.getElementById("pipe_diameter").innerText = hyd.diameter.toFixed(3);
-  document.getElementById("std_diameter").innerText = hyd.diameter.toFixed(3);
-
-  // 🔹 Optimization
-  document.getElementById("opt_diameter").innerText = opt.diameter.toFixed(3);
-  document.getElementById("opt_velocity").innerText = opt.velocity || "---";
-
-  // 🔹 Pump Name
-  document.getElementById("pump_select").innerText = pump.name;
-
-  // 🔹 Alerts
-  let alert = "OK";
-
-  if (input.velocity > 2) alert = "⚠️ High Velocity";
-  if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
-
-  document.getElementById("alerts").innerText = alert;
-
-  // 🔹 Recommendation
-  let rec = "✔️ Design OK";
-
-  if (alert !== "OK") rec = "Adjust velocity";
-
-  document.getElementById("recommendation").innerText = rec;
-}
-
-
-// =========================
-// 🔹 UTIL
-// =========================
-
-function getC(material) {
-  return material === "pvc" ? 150 :
-         material === "hdpe" ? 140 : 120;
 }
 
 function interpolateHead(flow, curve) {
@@ -503,5 +390,121 @@ function drawFullCurve(pump, flow, hyd, input) {
       }
     }
   });
+}
+
+
+
+
+// =========================
+// 🔹 ENERGY
+// =========================
+
+function calculateEnergy(hyd, flow, input) {
+
+  let Q = flow.per_zone / 3600;
+
+  let power = (1000 * 9.81 * Q * hyd.tdh) / 1000 / 0.75;
+
+  let energy = power * input.hours;
+
+  return {
+    power,
+    energy,
+    cost: energy * input.tariff
+  };
+}
+
+// =========================
+// 🔹 OPTIMIZATION
+// =========================
+
+function optimizeSystem(input, flow) {
+
+  let best = { cost: Infinity };
+
+  let velocities = [0.6, 0.8, 1.0, 1.2];
+
+  for (let v of velocities) {
+
+    let d = Math.sqrt((4 * flow.m3s) / (Math.PI * v));
+
+    let std_d = standard_diameters.find(x => x >= d);
+
+    if (!std_d) continue;
+
+    let cost = std_d * 100;
+
+    if (cost < best.cost) {
+      best = { velocity: v, diameter: std_d, cost };
+    }
+  }
+
+  return best;
+}
+
+// =========================
+// 🔹 UI
+// =========================
+
+function updateUI(flow, hyd, pump, energy, opt, input) {
+
+  // 🔹 Process
+  document.getElementById("flow_zone").innerText = flow.per_zone.toFixed(2);
+  document.getElementById("head_loss").innerText = hyd.hf.toFixed(2);
+  document.getElementById("tdh").innerText = hyd.tdh.toFixed(2);
+
+  // 🔹 Pump
+  document.getElementById("pump_flow").innerText = flow.per_zone.toFixed(2);
+
+  let pump_head = interpolateHead(flow.per_zone, pump.curve);
+  document.getElementById("pump_head").innerText = pump_head.toFixed(2);
+
+  // 🔹 Pump Status
+  let status = (pump_head >= hyd.tdh) 
+    ? "✔️ Pump Suitable" 
+    : "❌ Not Suitable";
+
+  document.getElementById("pump_status").innerText = status;
+
+  // 🔹 Power & Energy
+  document.getElementById("power").innerText = energy.power.toFixed(2);
+  document.getElementById("energy").innerText = energy.energy.toFixed(2);
+  document.getElementById("cost").innerText = energy.cost.toFixed(2);
+
+  // 🔹 Diameter
+  document.getElementById("pipe_diameter").innerText = hyd.diameter.toFixed(3);
+  document.getElementById("std_diameter").innerText = hyd.diameter.toFixed(3);
+
+  // 🔹 Optimization
+  document.getElementById("opt_diameter").innerText = opt.diameter.toFixed(3);
+  document.getElementById("opt_velocity").innerText = opt.velocity || "---";
+
+  // 🔹 Pump Name
+  document.getElementById("pump_select").innerText = pump.name;
+
+  // 🔹 Alerts
+  let alert = "OK";
+
+  if (input.velocity > 2) alert = "⚠️ High Velocity";
+  if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
+
+  document.getElementById("alerts").innerText = alert;
+
+  // 🔹 Recommendation
+  let rec = "✔️ Design OK";
+
+  if (alert !== "OK") rec = "Adjust velocity";
+
+  document.getElementById("recommendation").innerText = rec;
+}
+
+
+// =========================
+// 🔹 UTIL
+// =========================
+
+function getC(material) {
+  return material === "pvc" ? 150 :
+         material === "hdpe" ? 140 : 120;
 }
 
