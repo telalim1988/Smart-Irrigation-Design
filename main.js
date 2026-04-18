@@ -365,7 +365,7 @@ window.current_design = {
   pump: document.getElementById("pump_select").innerText,
   energy: energy
 };
-}
+
 
 
 
