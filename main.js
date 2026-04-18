@@ -229,14 +229,56 @@ function optimizeSystem(input, flow) {
 
 function updateUI(flow, hyd, pump, energy, opt) {
 
-  document.getElementById("pump_flow").innerText = flow.per_zone.toFixed(2);
+  // 🔹 Process
+  document.getElementById("flow_zone").innerText = flow.per_zone.toFixed(2);
+  document.getElementById("head_loss").innerText = hyd.hf.toFixed(2);
   document.getElementById("tdh").innerText = hyd.tdh.toFixed(2);
-  document.getElementById("power").innerText = energy.power.toFixed(2);
-  document.getElementById("cost").innerText = energy.cost.toFixed(2);
-  document.getElementById("opt_diameter").innerText = opt.diameter.toFixed(3);
 
+  // 🔹 Pump
+  document.getElementById("pump_flow").innerText = flow.per_zone.toFixed(2);
+
+  let pump_head = interpolateHead(flow.per_zone, pump.curve);
+  document.getElementById("pump_head").innerText = pump_head.toFixed(2);
+
+  // 🔹 Pump Status
+  let status = (pump_head >= hyd.tdh) 
+    ? "✔️ Pump Suitable" 
+    : "❌ Not Suitable";
+
+  document.getElementById("pump_status").innerText = status;
+
+  // 🔹 Power & Energy
+  document.getElementById("power").innerText = energy.power.toFixed(2);
+  document.getElementById("energy").innerText = energy.energy.toFixed(2);
+  document.getElementById("cost").innerText = energy.cost.toFixed(2);
+
+  // 🔹 Diameter
+  document.getElementById("pipe_diameter").innerText = hyd.diameter.toFixed(3);
+  document.getElementById("std_diameter").innerText = hyd.diameter.toFixed(3);
+
+  // 🔹 Optimization
+  document.getElementById("opt_diameter").innerText = opt.diameter.toFixed(3);
+  document.getElementById("opt_velocity").innerText = opt.velocity || "---";
+
+  // 🔹 Pump Name
   document.getElementById("pump_select").innerText = pump.name;
+
+  // 🔹 Alerts
+  let alert = "OK";
+
+  if (input.velocity > 2) alert = "⚠️ High Velocity";
+  if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
+
+  document.getElementById("alerts").innerText = alert;
+
+  // 🔹 Recommendation
+  let rec = "✔️ Design OK";
+
+  if (alert !== "OK") rec = "Adjust velocity";
+
+  document.getElementById("recommendation").innerText = rec;
 }
+
 
 // =========================
 // 🔹 UTIL
