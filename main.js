@@ -211,7 +211,6 @@ function generateSystemCurve(flow, input) {
   let Qs = [];
   let Hs = [];
 
-  // نولد نقاط من 0 إلى 1.5× التدفق
   let maxFlow = flow.per_zone * 1.5;
 
   for (let q = 0.1; q <= maxFlow; q += 0.2) {
@@ -231,11 +230,12 @@ function generateSystemCurve(flow, input) {
     Hs.push(H);
   }
 
-  return { Qs, Hs };
+  return { Qs, Hs }; // 🔥 مهم جدًا
 }
 
-
 function findOperatingPoint(pump, system) {
+
+  if (!system || !system.Qs || !system.Hs) return null;
 
   for (let i = 0; i < system.Qs.length; i++) {
 
@@ -255,8 +255,6 @@ function findOperatingPoint(pump, system) {
 
   return null;
 }
-
-
 
 
 
