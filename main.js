@@ -77,12 +77,13 @@ function calculate() {
   let opt = optimizeSystem(input, flow);
 
   drawFullCurve(pump, flow, hyd, input);
-  let op = findOperatingPoint(pump, system);
+ let op = findOperatingPoint(pump, system);
 
 let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
 
 let bepStatus = evaluateBEP(op, bep);
+  
 updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // حفظ التصميم
   window.current_design = {
@@ -460,7 +461,7 @@ function optimizeSystem(input, flow) {
 
     let d = Math.sqrt((4 * flow.m3s) / (Math.PI * v));
 
-    let std_d = standard_diameters.find(x => x >= d);
+    let std_d = standard_diameters.find(x => x >= d) || standard_diameters.at(-1);
 
     if (!std_d) continue;
 
@@ -479,11 +480,22 @@ function optimizeSystem(input, flow) {
 // =========================
 
 function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
-  
-bepStatus = bepStatus || "---";
-  // 🔹 Pump head
-  let pump_head = interpolateHead(flow.per_zone, pump.curve);
 
+  // 🔥 حماية المضخة (توضع هنا بالضبط)
+  if (!pump) {
+    setText("pump_select", "No Pump Found");
+    setText("pump_status", "❌ No Pump");
+
+    // تنظيف باقي القيم المرتبطة بالمضخة
+    setText("pump_head", "---");
+    setText("bep_status", "---");
+
+    return; // ⛔ إيقاف باقي التنفيذ
+  }
+
+  bepStatus = bepStatus || "---";
+
+  
   // 🔹 Pump Status
   let status = (pump_head >= hyd.tdh) 
     ? "✔️ Pump Suitable" 
@@ -517,8 +529,8 @@ bepStatus = bepStatus || "---";
  setText("energy", energy?.energy?.toFixed(2) || "---");
   setText("cost", energy.cost.toFixed(2));
 
-  setText("pipe_diameter", hyd.diameter.toFixed(3));
-  setText("std_diameter", hyd.std_d.toFixed(3));
+ setText("pipe_diameter", hyd.diameter.toFixed(3));
+setText("std_diameter", hyd.diameter.toFixed(3)); // ✅ إصلاح
 
  setText("opt_diameter", opt?.diameter?.toFixed(3) || "---");
   setText("opt_velocity", opt?.velocity || "---");
