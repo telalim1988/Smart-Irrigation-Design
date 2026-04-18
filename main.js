@@ -476,6 +476,61 @@ function optimizeSystem(input, flow) {
 }
 
 // =========================
+// 🤖 FULL AI ENGINE
+// =========================
+
+function runAIEngine(input) {
+
+  let best = null;
+
+  // 🔁 نجرب عدد Zones
+  for (let z = 1; z <= 10; z++) {
+
+    let tempInput = { ...input, zones: z };
+
+    // 🔹 الحسابات
+    let flow = calculateFlow(tempInput);
+    let hyd = calculateHydraulics(flow, tempInput);
+    let energy = calculateEnergy(flow, hyd, tempInput);
+
+    // 🔹 شرط السلامة
+    if (hyd.velocity > 2 || hyd.velocity < 0.6) continue;
+
+    // 🔹 اختيار الأفضل (أقل طاقة)
+    if (!best || energy.energy < best.energy.energy) {
+      best = {
+        zones: z,
+        flow,
+        hyd,
+        energy
+      };
+    }
+  }
+
+  return best;
+}
+
+
+function runFullAI() {
+
+  let input = getInputs();
+
+  let result = runAIEngine(input);
+
+  if (!result) {
+    alert("No valid design found");
+    return;
+  }
+
+  // 🔥 عرض النتائج
+  setText("opt_zones", result.zones);
+  setText("opt_diameter", result.hyd.diameter.toFixed(3));
+  setText("opt_velocity", result.hyd.velocity.toFixed(2));
+
+  setText("comp_energy", result.energy.energy.toFixed(2));
+}
+
+// =========================
 // 🔹 UI
 // =========================
 
