@@ -141,7 +141,7 @@ function calculateHydraulics(flow, input) {
   let std_d = standard_diameters.find(x => x >= d)
     || standard_diameters.at(-1);
 
-  let hf = 10.67 * input.length * Math.pow(flow.m3s, 1.852) /
+  let hf = 10.67 * input.pipe_length * Math.pow(flow.m3s, 1.852) /
            (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
 
   let tdh = hf + input.elevation;
