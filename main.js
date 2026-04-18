@@ -365,6 +365,9 @@ function findOperatingPoint(pump, system) {
 }
 
 
+
+
+
 let pumpChart = null;
 
 function drawFullCurve(pump, flow, hyd, input) {
@@ -392,7 +395,7 @@ function drawFullCurve(pump, flow, hyd, input) {
   // Pump Curve
   {
     label: 'Pump Curve',
-    data: pumpHeads,
+    data: pump.curve.map(p => ({ x: p.flow, y: p.head }))
     borderWidth: 3,
     tension: 0.3
   },
@@ -424,7 +427,7 @@ function drawFullCurve(pump, flow, hyd, input) {
     ),
     pointRadius: 6,
     showLine: false
-  }
+  },
 
 ]
     options: {
@@ -444,4 +447,4 @@ function drawFullCurve(pump, flow, hyd, input) {
       }
     }
   });
-}
+
