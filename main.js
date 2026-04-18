@@ -459,39 +459,13 @@ function optimizeSystem(input, flow) {
 
 function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
 
-  // 🔹 Process
-  document.getElementById("flow_zone").innerText = flow.per_zone.toFixed(2);
-  document.getElementById("head_loss").innerText = hyd.hf.toFixed(2);
-  document.getElementById("tdh").innerText = hyd.tdh.toFixed(2);
-
-  // 🔹 Pump
-  document.getElementById("pump_flow").innerText = flow.per_zone.toFixed(2);
-
+  // 🔹 Pump head
   let pump_head = interpolateHead(flow.per_zone, pump.curve);
-  document.getElementById("pump_head").innerText = pump_head.toFixed(2);
 
   // 🔹 Pump Status
   let status = (pump_head >= hyd.tdh) 
     ? "✔️ Pump Suitable" 
     : "❌ Not Suitable";
-
-  document.getElementById("pump_status").innerText = status;
-
-  // 🔹 Power & Energy
-  document.getElementById("power").innerText = energy.power.toFixed(2);
-  document.getElementById("energy").innerText = energy.energy.toFixed(2);
-  document.getElementById("cost").innerText = energy.cost.toFixed(2);
-
-  // 🔹 Diameter
-  document.getElementById("pipe_diameter").innerText = hyd.diameter.toFixed(3);
-  document.getElementById("std_diameter").innerText = hyd.diameter.toFixed(3);
-
-  // 🔹 Optimization
-  document.getElementById("opt_diameter").innerText = opt.diameter.toFixed(3);
-  document.getElementById("opt_velocity").innerText = opt.velocity || "---";
-
-  // 🔹 Pump Name
-  document.getElementById("pump_select").innerText = pump.name;
 
   // 🔹 Alerts
   let alert = "OK";
@@ -499,17 +473,41 @@ function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
   if (input.velocity > 2) alert = "⚠️ High Velocity";
   if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
 
-  document.getElementById("alerts").innerText = alert;
-
   // 🔹 Recommendation
   let rec = "✔️ Design OK";
 
   if (alert !== "OK") rec = "Adjust velocity";
+  if (bepStatus.includes("Far")) rec = "Adjust zones to reach BEP";
 
-  document.getElementById("recommendation").innerText = rec;
+  // =========================
+  // 🔥 UI (موحد بالكامل)
+  // =========================
+
+  setText("flow_zone", flow.per_zone.toFixed(2));
+  setText("head_loss", hyd.hf.toFixed(2));
+  setText("tdh", hyd.tdh.toFixed(2));
+
+  setText("pump_flow", flow.per_zone.toFixed(2));
+  setText("pump_head", pump_head.toFixed(2));
+  setText("pump_status", status);
+
+  setText("power", energy.power.toFixed(2));
+  setText("energy", energy.energy.toFixed(2));
+  setText("cost", energy.cost.toFixed(2));
+
+  setText("pipe_diameter", hyd.diameter.toFixed(3));
+  setText("std_diameter", hyd.std_d.toFixed(3));
+
+  setText("opt_diameter", opt.diameter.toFixed(3));
+  setText("opt_velocity", opt.velocity || "---");
+
+  setText("pump_select", pump.name);
+
+  setText("alerts", alert);
+  setText("recommendation", rec);
+
   setText("bep_status", bepStatus);
 }
-
 
 // =========================
 // 🔹 UTIL
