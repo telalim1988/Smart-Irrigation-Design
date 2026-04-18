@@ -74,6 +74,8 @@ function calculate() {
     pump: pump.name,
     energy: energy.energy
   };
+
+  drawFullCurve(pump, flow, hyd, input);
 }
 
 // =========================
@@ -308,4 +310,126 @@ function interpolateHead(flow, curve) {
   if (flow > curve[curve.length - 1].flow) return curve[curve.length - 1].head;
 
   return null;
+}
+
+function generateSystemCurve(flow, input) {
+
+  let C = getC(input.material);
+
+  let Qs = [];
+  let Hs = [];
+
+  // نولد نقاط من 0 إلى 1.5× التدفق
+  let maxFlow = flow.per_zone * 1.5;
+
+  for (let q = 0.1; q <= maxFlow; q += 0.2) {
+
+    let q_m3s = q / 3600;
+
+    let d = Math.sqrt((4 * q_m3s) / (Math.PI * input.velocity));
+
+    let std_d = standard_diameters.find(x => x >= d) || standard_diameters.at(-1);
+
+    let hf = 10.67 * input.pipe_length * Math.pow(q_m3s, 1.852) /
+             (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
+
+    let H = hf + input.elevation;
+
+    Qs.push(q);
+    Hs.push(H);
+  }
+
+  return { Qs, Hs };
+}
+
+
+function findOperatingPoint(pump, system) {
+
+  for (let i = 0; i < system.Qs.length; i++) {
+
+    let q = system.Qs[i];
+    let systemHead = system.Hs[i];
+
+    let pumpHead = interpolateHead(q, pump.curve);
+
+    if (pumpHead === null) continue;
+
+    let diff = Math.abs(pumpHead - systemHead);
+
+    if (diff < 0.5) {
+      return { flow: q, head: pumpHead };
+    }
+  }
+
+  return null;
+}
+
+
+let pumpChart = null;
+
+function drawFullCurve(pump, flow, hyd, input) {
+
+  let ctx = document.getElementById("pumpChart");
+  if (!ctx) return;
+
+  let pumpFlows = pump.curve.map(p => p.flow);
+  let pumpHeads = pump.curve.map(p => p.head);
+
+  let system = generateSystemCurve(flow, input);
+
+  let op = findOperatingPoint(pump, system);
+
+  if (pumpChart) pumpChart.destroy();
+
+  pumpChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: system.Qs,
+      datasets: [
+
+        // 🔹 Pump Curve
+        {
+          label: 'Pump Curve',
+          data: pumpHeads,
+          borderWidth: 3,
+          tension: 0.3
+        },
+
+        // 🔹 System Curve
+        {
+          label: 'System Curve',
+          data: system.Hs,
+          borderWidth: 3,
+          borderDash: [5, 5],
+          tension: 0.3
+        },
+
+        // 🔴 Operating Point
+        {
+          label: 'Operating Point',
+          data: system.Qs.map(q =>
+            op && Math.abs(q - op.flow) < 0.2 ? op.head : null
+          ),
+          pointRadius: 7,
+          showLine: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#fff' } }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Flow (m³/hr)', color: '#fff' },
+          ticks: { color: '#fff' }
+        },
+        y: {
+          title: { display: true, text: 'Head (m)', color: '#fff' },
+          ticks: { color: '#fff' }
+        }
+      }
+    }
+  });
 }
