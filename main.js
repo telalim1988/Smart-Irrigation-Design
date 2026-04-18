@@ -63,7 +63,7 @@ function calculate() {
 
   let energy = calculateEnergy(hyd, flow, input);
   let opt = optimizeSystem(input, flow);
- updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
+
   drawFullCurve(pump, flow, hyd, input);
   let op = findOperatingPoint(pump, system);
 
@@ -71,6 +71,7 @@ let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
 
 let bepStatus = evaluateBEP(op, bep);
+updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // حفظ التصميم
   window.current_design = {
     zones: input.zones,
