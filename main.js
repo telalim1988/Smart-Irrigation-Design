@@ -522,12 +522,7 @@ function runFullAI() {
     return;
   }
 
-  // 🔥 عرض النتائج
-  setText("opt_zones", result.zones);
-  setText("opt_diameter", result.hyd.diameter.toFixed(3));
-  setText("opt_velocity", result.hyd.velocity.toFixed(2));
-
-  setText("comp_energy", result.energy.energy.toFixed(2));
+  
 }
 
 // =========================
@@ -602,6 +597,13 @@ setText("std_diameter", hyd.diameter.toFixed(3)); // ✅ إصلاح
   setText("recommendation", rec);
   bepStatus = bepStatus || "No Data";
   setText("bep_status", bepStatus);
+// 🔥 عرض النتائج
+  setText("opt_zones", result.zones);
+  setText("opt_diameter", result.hyd.diameter.toFixed(3));
+  setText("opt_velocity", result.hyd.velocity.toFixed(2));
+
+  setText("comp_energy", result.energy.energy.toFixed(2));
+  
 }
 
 // =========================
