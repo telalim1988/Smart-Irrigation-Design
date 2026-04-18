@@ -214,7 +214,7 @@ function interpolateHead(flow, curve) {
   if (flow < curve[0].flow) return curve[0].head;
   if (flow > curve[curve.length - 1].flow) return curve[curve.length - 1].head;
 
-  return null;
+  return curve[curve.length - 1].head;
 }
 
 
@@ -481,6 +481,11 @@ function optimizeSystem(input, flow) {
 
 function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
 
+    let pump_head = interpolateHead(flow.per_zone, pump.curve);
+
+if (pump_head === null || isNaN(pump_head)) {
+  pump_head = 0;
+}
   // 🔥 حماية المضخة (توضع هنا بالضبط)
   if (!pump) {
     setText("pump_select", "No Pump Found");
@@ -497,9 +502,9 @@ function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
 
   
   // 🔹 Pump Status
-  let status = (pump_head >= hyd.tdh) 
-    ? "✔️ Pump Suitable" 
-    : "❌ Not Suitable";
+ let status = (pump_head && pump_head >= hyd.tdh)
+  ? "✔️ Pump Suitable"
+  : "❌ Not Suitable";
 
   // 🔹 Alerts
   let alert = "OK";
@@ -522,6 +527,7 @@ function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
   setText("tdh", hyd.tdh.toFixed(2));
 
   setText("pump_flow", flow.per_zone.toFixed(2));
+
   setText("pump_head", pump_head.toFixed(2));
   setText("pump_status", status);
 
