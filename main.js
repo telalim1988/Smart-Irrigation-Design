@@ -458,7 +458,8 @@ function optimizeSystem(input, flow) {
 // =========================
 
 function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
-
+  
+bepStatus = bepStatus || "---";
   // 🔹 Pump head
   let pump_head = interpolateHead(flow.per_zone, pump.curve);
 
