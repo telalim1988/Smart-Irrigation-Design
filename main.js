@@ -396,6 +396,7 @@ function drawFullCurve(pump, flow, hyd, input) {
   });
 }
 
+
 function evaluateBEP(op, bep) {
 
   if (!op || !bep) return "No Data";
