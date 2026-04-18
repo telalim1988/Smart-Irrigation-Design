@@ -83,16 +83,16 @@ function calculate() {
 function getInputs() {
 
   let data = {
-    et0: parseFloat(et0.value),
-    kc: parseFloat(kc.value),
-    area: parseFloat(area.value),
-    hours: parseFloat(hours.value),
-    zones: parseInt(zones.value),
-    velocity: parseFloat(velocity.value),
-    length: parseFloat(length.value),
-    elevation: parseFloat(elevation.value),
-    material: material.value,
-    tariff: parseFloat(tariff.value)
+    et0: parseFloat(document.getElementById("et0").value),
+    kc: parseFloat(document.getElementById("kc").value),
+    area: parseFloat(document.getElementById("area").value),
+    hours: parseFloat(document.getElementById("hours").value),
+    zones: parseInt(document.getElementById("zones").value),
+    velocity: parseFloat(document.getElementById("velocity").value),
+    pipe_length: parseFloat(document.getElementById("length").value), // ✅
+    elevation: parseFloat(document.getElementById("elevation").value),
+    material: document.getElementById("material").value,
+    tariff: parseFloat(document.getElementById("tariff").value)
   };
 
   for (let key in data) {
