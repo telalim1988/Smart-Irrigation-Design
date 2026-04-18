@@ -63,7 +63,7 @@ function calculate() {
 
   let energy = calculateEnergy(hyd, flow, input);
   let opt = optimizeSystem(input, flow);
-  updateUI(flow, hyd, pump, energy, opt, input);
+ updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   drawFullCurve(pump, flow, hyd, input);
   let op = findOperatingPoint(pump, system);
   let mid = Math.floor(pump.curve.length / 2);
@@ -396,15 +396,15 @@ function drawFullCurve(pump, flow, hyd, input) {
 
 function evaluateBEP(op, bep) {
 
-  if (!op || !bep) return "---";
+  if (!op || !bep) return "No Data";
 
   let diff = Math.abs(op.flow - bep.flow);
 
   if (diff < 0.5) return "Near BEP (Optimal)";
   if (diff < 1.5) return "Acceptable";
+
   return "Far from BEP";
 }
-
 
 // =========================
 // 🔹 ENERGY
