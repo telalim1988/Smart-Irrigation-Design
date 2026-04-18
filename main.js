@@ -527,7 +527,7 @@ bepStatus = bepStatus || "---";
 
   setText("alerts", alert);
   setText("recommendation", rec);
-
+  bepStatus = bepStatus || "No Data";
   setText("bep_status", bepStatus);
 }
 
