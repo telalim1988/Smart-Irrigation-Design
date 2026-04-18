@@ -65,6 +65,10 @@ function calculate() {
   let opt = optimizeSystem(input, flow);
   updateUI(flow, hyd, pump, energy, opt, input);
   drawFullCurve(pump, flow, hyd, input);
+  let op = findOperatingPoint(pump, system);
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep = pump.curve[mid];
+  let bepStatus = evaluateBEP(op, bep);
   // حفظ التصميم
   window.current_design = {
     zones: input.zones,
@@ -390,7 +394,16 @@ function drawFullCurve(pump, flow, hyd, input) {
   });
 }
 
+function evaluateBEP(op, bep) {
 
+  if (!op || !bep) return "---";
+
+  let diff = Math.abs(op.flow - bep.flow);
+
+  if (diff < 0.5) return "Near BEP (Optimal)";
+  if (diff < 1.5) return "Acceptable";
+  return "Far from BEP";
+}
 
 
 // =========================
@@ -444,7 +457,7 @@ function optimizeSystem(input, flow) {
 // 🔹 UI
 // =========================
 
-function updateUI(flow, hyd, pump, energy, opt, input) {
+function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
 
   // 🔹 Process
   document.getElementById("flow_zone").innerText = flow.per_zone.toFixed(2);
