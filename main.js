@@ -374,6 +374,8 @@ function drawFullCurve(pump, flow, hyd, input) {
 
   let pumpFlows = pump.curve.map(p => p.flow);
   let pumpHeads = pump.curve.map(p => p.head);
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep = pump.curve[mid];
 
   let system = generateSystemCurve(flow, input);
 
@@ -385,36 +387,46 @@ function drawFullCurve(pump, flow, hyd, input) {
     type: 'line',
     data: {
       labels: system.Qs,
-      datasets: [
+     datasets: [
 
-        // 🔹 Pump Curve
-        {
-          label: 'Pump Curve',
-          data: pumpHeads,
-          borderWidth: 3,
-          tension: 0.3
-        },
+  // Pump Curve
+  {
+    label: 'Pump Curve',
+    data: pumpHeads,
+    borderWidth: 3,
+    tension: 0.3
+  },
 
-        // 🔹 System Curve
-        {
-          label: 'System Curve',
-          data: system.Hs,
-          borderWidth: 3,
-          borderDash: [5, 5],
-          tension: 0.3
-        },
+  // System Curve
+  {
+    label: 'System Curve',
+    data: system.Hs,
+    borderWidth: 3,
+    borderDash: [5, 5],
+    tension: 0.3
+  },
 
-        // 🔴 Operating Point
-        {
-          label: 'Operating Point',
-          data: system.Qs.map(q =>
-            op && Math.abs(q - op.flow) < 0.2 ? op.head : null
-          ),
-          pointRadius: 7,
-          showLine: false
-        }
-      ]
-    },
+  // Operating Point
+  {
+    label: 'Operating Point',
+    data: system.Qs.map(q =>
+      op && Math.abs(q - op.flow) < 0.2 ? op.head : null
+    ),
+    pointRadius: 7,
+    showLine: false
+  },
+
+  // 🔥 BEP (هنا بالضبط)
+  {
+    label: 'BEP',
+    data: system.Qs.map(q =>
+      Math.abs(q - bep.flow) < 0.2 ? bep.head : null
+    ),
+    pointRadius: 6,
+    showLine: false
+  }
+
+]
     options: {
       responsive: true,
       plugins: {
