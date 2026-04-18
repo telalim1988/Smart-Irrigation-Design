@@ -522,6 +522,12 @@ function runFullAI() {
     return;
   }
 
+  // 🔥 عرض النتائج
+  setText("opt_zones", result.zones);
+  setText("opt_diameter", result.hyd.diameter.toFixed(3));
+  setText("opt_velocity", result.hyd.velocity.toFixed(2));
+
+  setText("comp_energy", result.energy.energy.toFixed(2));
   
 }
 
@@ -563,10 +569,15 @@ if (pump_head === null || isNaN(pump_head)) {
   if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
 
   // 🔹 Recommendation
-  let rec = "✔️ Design OK";
+ let rec = "✔️ Design OK";
 
-  if (alert !== "OK") rec = "Adjust velocity";
-  if (bepStatus.includes("Far")) rec = "Adjust zones to reach BEP";
+if (alert !== "OK") rec = "Adjust velocity";
+
+if (bepStatus && bepStatus.includes("Far")) {
+  rec = "Adjust zones to reach BEP";
+}
+
+setText("recommendation", rec);
 
   // =========================
   // 🔥 UI (موحد بالكامل)
@@ -597,13 +608,7 @@ setText("std_diameter", hyd.diameter.toFixed(3)); // ✅ إصلاح
   setText("recommendation", rec);
   bepStatus = bepStatus || "No Data";
   setText("bep_status", bepStatus);
-// 🔥 عرض النتائج
-  setText("opt_zones", result.zones);
-  setText("opt_diameter", result.hyd.diameter.toFixed(3));
-  setText("opt_velocity", result.hyd.velocity.toFixed(2));
 
-  setText("comp_energy", result.energy.energy.toFixed(2));
-  
 }
 
 // =========================
