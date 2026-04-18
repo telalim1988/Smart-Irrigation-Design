@@ -507,6 +507,7 @@ function updateUI(flow, hyd, pump, energy, opt, input, bepStatus){
   if (alert !== "OK") rec = "Adjust velocity";
 
   document.getElementById("recommendation").innerText = rec;
+  setText("bep_status", bepStatus);
 }
 
 
