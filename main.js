@@ -216,6 +216,7 @@ function interpolateHead(flow, curve) {
   return null;
 }
 
+
 function generateSystemCurve(flow, input) {
 
   let C = getC(input.material);
@@ -225,13 +226,17 @@ function generateSystemCurve(flow, input) {
 
   let maxFlow = flow.per_zone * 1.5;
 
+  // 🔥 حساب القطر مرة واحدة
+  let q_design = flow.per_zone / 3600;
+
+  let d = Math.sqrt((4 * q_design) / (Math.PI * input.velocity));
+
+  let std_d = standard_diameters.find(x => x >= d) || standard_diameters.at(-1);
+
+  // 🔁 loop
   for (let q = 0.1; q <= maxFlow; q += 0.2) {
 
     let q_m3s = q / 3600;
-
-    let d = Math.sqrt((4 * q_m3s) / (Math.PI * input.velocity));
-
-    let std_d = standard_diameters.find(x => x >= d) || standard_diameters.at(-1);
 
     let hf = 10.67 * input.pipe_length * Math.pow(q_m3s, 1.852) /
              (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
@@ -242,8 +247,10 @@ function generateSystemCurve(flow, input) {
     Hs.push(H);
   }
 
-  return { Qs, Hs }; // 🔥 مهم جدًا
+  return { Qs, Hs };
 }
+
+
 
 function findOperatingPoint(pump, system) {
 
@@ -507,16 +514,16 @@ bepStatus = bepStatus || "---";
   setText("pump_status", status);
 
   setText("power", energy.power.toFixed(2));
-  setText("energy", energy.energy.toFixed(2));
+ setText("energy", energy?.energy?.toFixed(2) || "---");
   setText("cost", energy.cost.toFixed(2));
 
   setText("pipe_diameter", hyd.diameter.toFixed(3));
   setText("std_diameter", hyd.std_d.toFixed(3));
 
-  setText("opt_diameter", opt.diameter.toFixed(3));
-  setText("opt_velocity", opt.velocity || "---");
+ setText("opt_diameter", opt?.diameter?.toFixed(3) || "---");
+  setText("opt_velocity", opt?.velocity || "---");
 
-  setText("pump_select", pump.name);
+  setText("pump_select", pump?.name || "---");
 
   setText("alerts", alert);
   setText("recommendation", rec);
