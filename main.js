@@ -576,10 +576,8 @@ function generateAnalysis(flow, hyd, pump, op, bep) {
 
   // 🔹 Final Recommendation
   if (pump) {
-    text += `Selected pump (${pump.name}) is `;
-    text += (op && op.head >= hyd.tdh)
-      ? "suitable for the system.\n"
-      : "not fully meeting system requirements.\n";
+    text += "Selected pump (" + pump.name + ") cannot deliver the required head (TDH). ";
+text += "A higher capacity pump is recommended.\n";
   }
 
   return text;
