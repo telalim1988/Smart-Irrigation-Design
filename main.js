@@ -20,39 +20,55 @@ let standard_diameters = [
 ];
 
 let pumps = [
+
   {
-    name: "Pump A",
+    name: "Pump A (Low)",
     curve: [
-      { flow: 0, head: 14 },
-      { flow: 2, head: 13 },
-      { flow: 4, head: 12 },
-      { flow: 6, head: 10 },
-      { flow: 8, head: 7 },
-      { flow: 10, head: 3 }
+      { flow: 0, head: 16 },
+      { flow: 2, head: 15 },
+      { flow: 4, head: 13.5 },
+      { flow: 6, head: 11 },
+      { flow: 8, head: 8 },
+      { flow: 10, head: 5 }
     ]
   },
+
   {
-    name: "Pump B",
+    name: "Pump B (Medium)",
     curve: [
-      { flow: 0, head: 18 },
-      { flow: 2, head: 17 },
-      { flow: 4, head: 15 },
-      { flow: 6, head: 13 },
-      { flow: 8, head: 10 },
-      { flow: 10, head: 6 }
+      { flow: 0, head: 22 },
+      { flow: 3, head: 20 },
+      { flow: 6, head: 17 },
+      { flow: 9, head: 13 },
+      { flow: 12, head: 9 },
+      { flow: 15, head: 5 }
     ]
   },
+
   {
-    name: "Pump C",
+    name: "Pump C (High)",
     curve: [
-      { flow: 0, head: 10 },
-      { flow: 2, head: 9 },
-      { flow: 4, head: 8 },
-      { flow: 6, head: 6 },
-      { flow: 8, head: 4 },
-      { flow: 10, head: 2 }
+      { flow: 0, head: 30 },
+      { flow: 5, head: 27 },
+      { flow: 10, head: 23 },
+      { flow: 15, head: 18 },
+      { flow: 20, head: 12 },
+      { flow: 25, head: 6 }
+    ]
+  },
+
+  {
+    name: "Pump D (High Flow)",
+    curve: [
+      { flow: 0, head: 20 },
+      { flow: 10, head: 18 },
+      { flow: 20, head: 15 },
+      { flow: 30, head: 11 },
+      { flow: 40, head: 7 },
+      { flow: 50, head: 3 }
     ]
   }
+
 ];
 
 
@@ -504,11 +520,22 @@ function calculate() {
   let flow = calculateFlow(input);
   let hyd = calculateHydraulics(flow, input);
 
-  let pump = selectPump(hyd, flow);
-  if (!pump) {
-    alert("❌ No suitable pump");
-    return;
-  }
+ let pump = selectPump(flow, hyd);
+
+// 🔥 FALLBACK (ضعه هنا مباشرة)
+if (!pump) {
+  let best = pumps.reduce((best, p) => {
+    let h = interpolateHead(flow.per_zone, p.curve);
+
+    if (!best || h > best.head) {
+      return { pump: p, head: h };
+    }
+
+    return best;
+  }, null);
+
+  pump = best ? best.pump : null;
+}
 
   let energy = calculateEnergy(hyd, flow, input);
   let opt = optimizeSystem(input, flow);
