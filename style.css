@@ -225,3 +225,45 @@ input, select {
 .btn {
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+
+/* =========================
+   🔹 BASE BOX
+========================= */
+
+.box {
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: #334155;
+  transition: 0.3s;
+}
+
+/* =========================
+   🔹 TYPES
+========================= */
+
+.box.info {
+  border-left: 5px solid #38bdf8;
+}
+
+.box.success {
+  border-left: 5px solid #22c55e;
+}
+
+.box.warning {
+  border-left: 5px solid #facc15;
+}
+
+.box.danger {
+  border-left: 5px solid #ef4444;
+}
+
+.box.primary {
+  border-left: 5px solid #a855f7;
+}
+
+/* Hover */
+.box:hover {
+  transform: scale(1.03);
+}
