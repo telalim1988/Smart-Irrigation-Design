@@ -55,46 +55,7 @@ let pumps = [
   }
 ];
 
-// =========================
-// 🔹 MAIN ENGINE
-// =========================
 
-function calculate() {
-
-  let input = getInputs();
-  if (!input) return;
-
-  let flow = calculateFlow(input);
-  let hyd = calculateHydraulics(flow, input);
-
-  let pump = selectPump(hyd, flow);
-  if (!pump) {
-    alert("❌ No suitable pump");
-    return;
-  }
-
-  let energy = calculateEnergy(hyd, flow, input);
-  let opt = optimizeSystem(input, flow);
-
-  drawFullCurve(pump, flow, hyd, input);
- let op = findOperatingPoint(pump, system);
-
-let mid = Math.floor(pump.curve.length / 2);
-let bep = pump.curve[mid];
-
-let bepStatus = evaluateBEP(op, bep);
-  
-updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
-  // حفظ التصميم
-  window.current_design = {
-    zones: input.zones,
-    velocity: input.velocity,
-    diameter: hyd.diameter,
-    pump: pump.name,
-    energy: energy.energy
-  };
-
-}
 
 // =========================
 // 🔹 INPUTS
@@ -530,6 +491,47 @@ function runFullAI() {
   setText("recommendation", "✔ AI Optimized Design");
 }
 
+
+// =========================
+// 🔹 MAIN ENGINE
+// =========================
+
+function calculate() {
+
+  let input = getInputs();
+  if (!input) return;
+
+  let flow = calculateFlow(input);
+  let hyd = calculateHydraulics(flow, input);
+
+  let pump = selectPump(hyd, flow);
+  if (!pump) {
+    alert("❌ No suitable pump");
+    return;
+  }
+
+  let energy = calculateEnergy(hyd, flow, input);
+  let opt = optimizeSystem(input, flow);
+
+  drawFullCurve(pump, flow, hyd, input);
+ let op = findOperatingPoint(pump, system);
+
+let mid = Math.floor(pump.curve.length / 2);
+let bep = pump.curve[mid];
+
+let bepStatus = evaluateBEP(op, bep);
+  
+updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
+  // حفظ التصميم
+  window.current_design = {
+    zones: input.zones,
+    velocity: input.velocity,
+    diameter: hyd.diameter,
+    pump: pump.name,
+    energy: energy.energy
+  };
+
+}
 
 // =========================
 // 🔹 UI
