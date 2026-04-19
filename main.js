@@ -514,12 +514,18 @@ function calculate() {
   let opt = optimizeSystem(input, flow);
 
   drawFullCurve(pump, flow, hyd, input);
+  
  let op = findOperatingPoint(pump, system);
 
 let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
 
 let bepStatus = evaluateBEP(op, bep);
+  // 🔥 Generate Analysis
+let analysis = generateAnalysis(flow, hyd, pump, op, bep);
+
+// 🔥 Show in UI
+setText("analysis_text", analysis);
   
 updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // حفظ التصميم
@@ -531,6 +537,52 @@ updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
     energy: energy.energy
   };
 
+}
+
+// =========================
+// 🔍 ANALYSIS ENGINE
+// =========================
+
+function generateAnalysis(flow, hyd, pump, op, bep) {
+
+  let text = "";
+
+  // 🔹 Operating Point
+  if (op) {
+    text += `The system operates at approximately ${op.flow.toFixed(2)} m³/hr `;
+    text += `with a head of ${op.head.toFixed(2)} m.\n\n`;
+  }
+
+  // 🔹 BEP Comparison
+  if (bep && op) {
+    let diff = Math.abs(op.flow - bep.flow);
+
+    if (diff < 0.5) {
+      text += "The operating point is close to the Best Efficiency Point (BEP), ";
+      text += "indicating optimal pump performance.\n\n";
+    } else {
+      text += "The operating point is away from BEP, which may reduce efficiency.\n\n";
+    }
+  }
+
+  // 🔹 Hydraulic Insight
+  if (hyd.velocity > 2) {
+    text += "Flow velocity is high, which may cause excessive head loss and pipe wear.\n\n";
+  } else if (hyd.velocity < 0.6) {
+    text += "Flow velocity is low, which may lead to sedimentation issues.\n\n";
+  } else {
+    text += "Flow velocity is within acceptable engineering limits.\n\n";
+  }
+
+  // 🔹 Final Recommendation
+  if (pump) {
+    text += `Selected pump (${pump.name}) is `;
+    text += (op && op.head >= hyd.tdh)
+      ? "suitable for the system.\n"
+      : "not fully meeting system requirements.\n";
+  }
+
+  return text;
 }
 
 // =========================
