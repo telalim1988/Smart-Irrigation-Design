@@ -557,6 +557,15 @@ if (pump_head === null || isNaN(pump_head)) {
   }
 
   bepStatus = bepStatus || "---";
+  let bepBox = document.getElementById("bep_box");
+
+if (bepStatus.includes("Optimal")) {
+  bepBox.className = "box success";
+} else if (bepStatus.includes("Acceptable")) {
+  bepBox.className = "box warning";
+} else {
+  bepBox.className = "box danger";
+}
 
   
   // 🔹 Pump Status
@@ -565,12 +574,26 @@ if (pump_head === null || isNaN(pump_head)) {
   : "❌ Not Suitable";
 
   // 🔹 Alerts
+  let alertBox = document.getElementById("alerts_box");
+
+if (alert === "OK") {
+  alertBox.className = "box success";
+} else {
+  alertBox.className = "box danger";
+}
   let alert = "OK";
 
   if (input.velocity > 2) alert = "⚠️ High Velocity";
   if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
 
   // 🔹 Recommendation
+  let recBox = document.getElementById("rec_box");
+
+if (rec.includes("OK")) {
+  recBox.className = "box success";
+} else {
+  recBox.className = "box warning";
+}
  let rec = "✔️ Design OK";
 
 if (alert !== "OK") rec = "Adjust velocity";
