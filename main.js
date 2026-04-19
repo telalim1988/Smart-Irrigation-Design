@@ -530,7 +530,9 @@ if (!pump) {
     if (!best || h > best.head) {
       return { pump: p, head: h };
     }
-
+if (!pump) {
+  console.warn("⚠️ No exact pump match — fallback used");
+}
     return best;
   }, null);
 
