@@ -269,3 +269,51 @@ input, select {
 }
 
 
+
+/* =========================
+   🔹 DASHBOARD GRID (NEW)
+========================= */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 320px 1fr 350px;
+  height: 100vh;
+  gap: 10px;
+  padding: 10px;
+  background: #0f172a;
+}
+
+/* Panels upgrade */
+.panel {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 15px;
+  color: white;
+  overflow-y: auto;
+}
+
+/* Left panel */
+.left {
+  border-right: 1px solid #334155;
+}
+
+/* Center panel */
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Right panel */
+.right {
+  border-left: 1px solid #334155;
+}
+
+/* Chart size fix */
+#pumpChart {
+  width: 100% !important;
+  height: 450px !important;
+}
+
+
