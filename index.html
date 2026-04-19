@@ -15,8 +15,8 @@
 
 
 
-<!-- MAIN GRID -->
-<div class="panel">
+<!-- LEFT PANEL (CONTROL) -->
+<div class="panel left">
 
   <h3>⚙️ CONTROL PANEL</h3>
 
@@ -126,31 +126,31 @@
       <input id="tariff" type="number" placeholder="Cost">
       <span>$/kWh</span>
     </div>
-
-
-  <div class="box">
-  <button class="btn btn-run" onclick="calculate()">RUN DESIGN</button>
-</div>
-
-<div class="box">
-  <button class="btn btn-opt" onclick="applyOptimization()">
-    APPLY OPTIMIZATION
-  </button>
-</div>
-
-<div class="box">
-  <button class="btn btn-ai" onclick="runFullAI()">
-    🤖 RUN AI DESIGN
-  </button>
-</div>
-
-<div class="box">
-  <button class="btn btn-report" onclick="generateReport()">
-    EXPORT REPORT
-  </button>
-</div>
   </div>
 
+  <!-- BUTTONS (مفصولين خارج الكارد) -->
+  <div class="button-group">
+
+    <button class="btn btn-run" onclick="calculate()">
+      ▶ RUN DESIGN
+    </button>
+
+    <button class="btn btn-opt" onclick="applyOptimization()">
+      ⚙ OPTIMIZATION
+    </button>
+
+    <button class="btn btn-ai" onclick="runFullAI()">
+      🤖 AI DESIGN
+    </button>
+
+    <button class="btn btn-report" onclick="generateReport()">
+      📄 EXPORT REPORT
+    </button>
+
+  </div>
+
+</div>
+  
 <!-- CENTER PANEL (PROCESS) -->
 <div class="panel">
 
