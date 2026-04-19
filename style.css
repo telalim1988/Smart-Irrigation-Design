@@ -317,6 +317,21 @@ input, select {
 }
 
 
+/* =========================
+   🔹 ANALYSIS BOX
+========================= */
+
+.analysis-box {
+  margin-top: 15px;
+  background: #020617;
+  padding: 12px;
+  border-radius: 12px;
+  border-left: 4px solid #38bdf8;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #cbd5f5;
+}
+
 canvas {
   width: 100% !important;
   height: 500px !important;
