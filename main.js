@@ -574,6 +574,11 @@ if (bepStatus.includes("Optimal")) {
   : "❌ Not Suitable";
 
   // 🔹 Alerts
+  
+  let alert = "OK";
+
+  if (input.velocity > 2) alert = "⚠️ High Velocity";
+  if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
   let alertBox = document.getElementById("alerts_box");
 
 if (alert === "OK") {
@@ -581,19 +586,9 @@ if (alert === "OK") {
 } else {
   alertBox.className = "box danger";
 }
-  let alert = "OK";
-
-  if (input.velocity > 2) alert = "⚠️ High Velocity";
-  if (input.velocity < 0.6) alert = "⚠️ Low Velocity";
 
   // 🔹 Recommendation
-  let recBox = document.getElementById("rec_box");
-
-if (rec.includes("OK")) {
-  recBox.className = "box success";
-} else {
-  recBox.className = "box warning";
-}
+ 
  let rec = "✔️ Design OK";
 
 if (alert !== "OK") rec = "Adjust velocity";
@@ -601,7 +596,13 @@ if (alert !== "OK") rec = "Adjust velocity";
 if (bepStatus && bepStatus.includes("Far")) {
   rec = "Adjust zones to reach BEP";
 }
+ let recBox = document.getElementById("rec_box");
 
+if (rec.includes("OK")) {
+  recBox.className = "box success";
+} else {
+  recBox.className = "box warning";
+}
 setText("recommendation", rec);
 
   // =========================
