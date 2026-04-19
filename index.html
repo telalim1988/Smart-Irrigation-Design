@@ -16,12 +16,13 @@
 
 
 <!-- LEFT PANEL (CONTROL) -->
+<div class="dashboard">
 <div class="panel left">
 
   <h3>⚙️ CONTROL PANEL</h3>
 
   <!-- System -->
- <div class="box">
+  <div class="card">
     <h4>🌱 System</h4>
     <select id="system" class="input">
       <option value="drip">Drip</option>
@@ -30,7 +31,7 @@
   </div>
 
   <!-- Mode -->
- <div class="box">
+  <div class="card">
     <h4>🔄 Operation Mode</h4>
     <select id="mode" class="input">
       <option value="zone">Zone Operation</option>
@@ -38,48 +39,48 @@
     </select>
   </div>
 
-  <!-- Water Requirement -->
- <div class="box">
+  <!-- Water -->
+  <div class="card">
     <h4>💧 Water Requirement</h4>
 
-  <div class="box">
+    <div class="input-group">
       <input id="et0" type="number" placeholder="ET0">
       <span>mm/day</span>
     </div>
 
-   <div class="box">
+    <div class="input-group">
       <input id="kc" type="number" placeholder="Kc">
       <span>-</span>
     </div>
   </div>
 
   <!-- Field -->
- <div class="box">
+  <div class="card">
     <h4>📐 Field</h4>
 
- <div class="box">
+    <div class="input-group">
       <input id="area" type="number" placeholder="Area">
       <span>m²</span>
     </div>
 
- <div class="box">
+    <div class="input-group">
       <input id="zones" type="number" placeholder="Zones">
       <span>#</span>
     </div>
   </div>
 
   <!-- Emitters -->
-  <div class="box">
+  <div class="card">
     <h4>🚿 Emitters</h4>
 
- <div class="box">
+    <div class="input-group">
       <input id="emitter_flow" type="number" placeholder="Flow">
       <span>L/hr</span>
     </div>
   </div>
 
   <!-- Operation -->
- <div class="box">
+  <div class="card">
     <h4>⏱ Operation</h4>
 
     <div class="input-group">
@@ -89,27 +90,27 @@
   </div>
 
   <!-- Hydraulics -->
-<div class="box">
+  <div class="card">
     <h4>📊 Hydraulics</h4>
 
-    <div class="box">
+    <div class="input-group">
       <input id="length" type="number" placeholder="Pipe Length">
       <span>m</span>
     </div>
 
-  <div class="box">
+    <div class="input-group">
       <input id="elevation" type="number" placeholder="Elevation">
       <span>m</span>
     </div>
-  
-<div class="box">
+
+    <div class="input-group">
       <input id="velocity" type="number" placeholder="Velocity">
       <span>m/s</span>
     </div>
   </div>
 
   <!-- Material -->
-<div class="box">
+  <div class="card">
     <h4>🧱 Material</h4>
     <select id="material" class="input">
       <option value="pvc">PVC</option>
@@ -119,42 +120,33 @@
   </div>
 
   <!-- Energy -->
-<div class="box">
+  <div class="card">
     <h4>⚡ Energy</h4>
 
-  <div class="box">
+    <div class="input-group">
       <input id="tariff" type="number" placeholder="Cost">
       <span>$/kWh</span>
     </div>
   </div>
 
-  <!-- BUTTONS (مفصولين خارج الكارد) -->
-<div class="box">
+  <!-- BUTTONS -->
+  <div class="button-group">
 
-    <button class="btn btn-run" onclick="calculate()">
-      ▶ RUN DESIGN
-    </button>
+    <button class="btn btn-run" onclick="calculate()">▶ RUN DESIGN</button>
 
-    <button class="btn btn-opt" onclick="applyOptimization()">
-      ⚙ OPTIMIZATION
-    </button>
+    <button class="btn btn-opt" onclick="applyOptimization()">⚙ OPTIMIZATION</button>
 
-    <button class="btn btn-ai" onclick="runFullAI()">
-      🤖 AI DESIGN
-    </button>
+    <button class="btn btn-ai" onclick="runFullAI()">🤖 AI DESIGN</button>
 
-    <button class="btn btn-report" onclick="generateReport()">
-      📄 EXPORT REPORT
-    </button>
+    <button class="btn btn-report" onclick="generateReport()">📄 EXPORT REPORT</button>
 
   </div>
 
 </div>
   
 <!-- CENTER PANEL (PROCESS) -->
-<div class="panel">
-
- 
+  
+<div class="panel center">
 
   <h3>PROCESS</h3>
 
@@ -201,7 +193,7 @@
  
 
 <!-- RIGHT PANEL (PUMP) -->
-<div class="panel">
+<div class="panel right">
 
   <h3>⚙️ SYSTEM STATUS</h3>
 
@@ -271,7 +263,7 @@
   </div>
 
 </div>
-
+</div>
  <!-- =========================
    PROFESSIONAL REPORT TEMPLATE
 ========================= -->
