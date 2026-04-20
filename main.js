@@ -113,7 +113,7 @@ let op = findOperatingPoint(pump, system);
 let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
 
-let bepStatus = evaluateBEP(op, bep);
+let bepStatus = getBEPStatus(op, bep);
 updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // 🔥 Generate Analysis
 let analysis = generateAnalysis(flow, hyd, pump, op, bep);
