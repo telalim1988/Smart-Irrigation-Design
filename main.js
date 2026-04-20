@@ -137,6 +137,7 @@ setText("analysis_text", ai.text);
     pump: pump.name,
     energy: energy.energy,
     
+ window.current_design_data = {
   flow,
   hyd,
   pump,
