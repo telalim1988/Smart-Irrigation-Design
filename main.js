@@ -135,7 +135,7 @@ setText("analysis_text", ai.text);
     velocity: input.velocity,
     diameter: hyd.diameter,
     pump: pump.name,
-    energy: energy.energy
+    energy: energy.energy,
     
   flow,
   hyd,
