@@ -1084,5 +1084,14 @@ function runFullExport() {
 
 
 setInterval(() => {
-  document.querySelector(".status").innerText = "System Running";
+  let statusEl = document.querySelector(".status");
+
+  if (!statusEl) return;
+
+  if (window.current_design_data) {
+    statusEl.innerText = "✔ System Ready";
+  } else {
+    statusEl.innerText = "⏳ Waiting for Input";
+  }
+
 }, 3000);
