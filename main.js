@@ -573,47 +573,79 @@ function runFullAI() {
 // 🔍 ANALYSIS ENGINE
 // =========================
 
-function generateAnalysis(flow, hyd, pump, op, bep) {
+function runAIAnalysis(flow, hyd, pump, op, input, energy) {
 
-  let text = "";
+  let report = "";
+  let score = 100;
 
-  // 🔹 Operating Point
-  if (op) {
-    text += `The system operates at approximately ${op.flow.toFixed(2)} m³/hr `;
-    text += `with a head of ${op.head.toFixed(2)} m.\n\n`;
+  // =========================
+  // 🔹 HYDRAULICS
+  // =========================
+  if (input.velocity < 0.6) {
+    report += "⚠️ Low velocity may cause sedimentation.\n";
+    score -= 10;
+  } else if (input.velocity > 2) {
+    report += "⚠️ High velocity may cause pipe wear and losses.\n";
+    score -= 10;
+  } else {
+    report += "✅ Hydraulic velocity is within optimal range.\n";
   }
 
-  // 🔹 BEP Comparison
-  if (bep && op) {
+  // =========================
+  // 🔹 PUMP PERFORMANCE
+  // =========================
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep = pump.curve[mid];
+
+  if (op) {
     let diff = Math.abs(op.flow - bep.flow);
 
     if (diff < 0.5) {
-      text += "The operating point is close to the Best Efficiency Point (BEP), ";
-      text += "indicating optimal pump performance.\n\n";
+      report += "✅ Pump operating near BEP (high efficiency).\n";
+    } else if (diff < 2) {
+      report += "⚠️ Pump slightly off BEP.\n";
+      score -= 5;
     } else {
-      text += "The operating point is away from BEP, which may reduce efficiency.\n\n";
+      report += "❌ Pump far from BEP (inefficient).\n";
+      score -= 15;
     }
   }
 
-  // 🔹 Hydraulic Insight
-if (input.velocity > 2) {
-    text += "Flow velocity is high, which may cause excessive head loss and pipe wear.\n\n";
-  } else if (hyd.velocity < 0.6) {
-    text += "Flow velocity is low, which may lead to sedimentation issues.\n\n";
-  } else {
-    text += "Flow velocity is within acceptable engineering limits.\n\n";
+  // =========================
+  // 🔹 OVERSIZING CHECK
+  // =========================
+  let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+
+  if (pumpHead > hyd.tdh * 1.3) {
+    report += "⚠️ Pump oversized → energy waste.\n";
+    score -= 10;
   }
 
-  // 🔹 Final Recommendation
- if (pump && op) {
-  text += "Pump is operating within system requirements.\n";
-} else {
-  text += "Selected pump cannot meet system requirements.\n";
-}
+  // =========================
+  // 🔹 ENERGY
+  // =========================
+  if (energy.power > 1) {
+    report += "⚠️ High power consumption.\n";
+    score -= 5;
+  } else {
+    report += "✅ Energy consumption is efficient.\n";
+  }
 
-  return text;
-}
+  // =========================
+  // 🔹 FINAL RATING
+  // =========================
+  let status = "EXCELLENT";
 
+  if (score < 85) status = "GOOD";
+  if (score < 70) status = "MODERATE";
+  if (score < 50) status = "POOR";
+
+  return {
+    text: report,
+    score: score,
+    status: status
+  };
+}
 // =========================
 // 🔹 UI
 // =========================
