@@ -1,6 +1,23 @@
 // =========================
 // 🔹 GLOBAL DATA
 // =========================
+window.addEventListener("load", () => {
+  let saved = localStorage.getItem("last_design");
+  if (saved) {
+    console.log("Loaded previous design");
+  }
+});
+
+
+let isRunning = false;
+
+function updateStatus(text, color = "#00ff88") {
+  let el = document.querySelector(".status");
+  if (!el) return;
+  el.innerText = text;
+  el.style.color = color;
+}
+
 
 function setText(id, value) {
   let el = document.getElementById(id);
@@ -90,7 +107,11 @@ setInterval(() => {
 // =========================
 
 function calculate() {
+  if (isRunning) return;
+isRunning = true;
+updateStatus("⏳ Calculating...", "#ffaa00");
 
+  
   let input = getInputs();
   if (!input) return;
 
@@ -105,7 +126,10 @@ if (!pump) {
 
   let best = pumps.reduce((best, p) => {
     let h = interpolateHead(flow.per_zone, p.curve);
-
+if (!pump) {
+  alert("No suitable pump found");
+  return;
+}
     if (!best || h > best.head) {
       return { pump: p, head: h };
     }
@@ -125,7 +149,9 @@ if (pump) {
   
 let system = generateSystemCurve(flow, input);
 let op = findOperatingPoint(pump, system);
-
+if (!op) {
+  console.warn("No operating point found");
+}
 let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
 
@@ -162,7 +188,8 @@ window.current_design_data = {
   energy: energy,
   ai: ai
 };
- 
+ updateStatus("✔ System Ready", "#00ff88");
+  isRunning = false;
 }
 
 
@@ -184,6 +211,26 @@ function getInputs() {
     material: document.getElementById("material").value,
     tariff: parseFloat(document.getElementById("tariff").value)
   };
+  // ===== VALIDATION =====
+if (data.velocity < 0.6 || data.velocity > 2) {
+  alert("Velocity must be between 0.6 – 2 m/s");
+  return null;
+}
+
+if (data.et0 <= 0 || data.et0 > 15) {
+  alert("ET0 out of realistic range (0–15)");
+  return null;
+}
+
+if (data.zones < 1 || data.zones > 50) {
+  alert("Zones must be between 1–50");
+  return null;
+}
+
+if (data.area <= 0) {
+  alert("Invalid area");
+  return null;
+}
 
   for (let key in data) {
     if (key !== "material" && (isNaN(data[key]) || data[key] <= 0)) {
@@ -194,6 +241,8 @@ function getInputs() {
 
   return data;
 }
+
+
 
 // =========================
 // 🔹 FLOW
@@ -218,6 +267,7 @@ function calculateFlow(input) {
   };
 }
 
+
 // =========================
 // 🔹 HYDRAULICS
 // =========================
@@ -239,6 +289,7 @@ function calculateHydraulics(flow, input) {
   return { diameter: std_d, hf, tdh };
 }
 
+
 // =========================
 // 🔹 PUMP
 // =========================
@@ -248,23 +299,29 @@ function selectPump(hyd, flow) {
   let best = null;
   let bestScore = Infinity;
 
-  for (let pump of pumps) {
+  for (let p of pumps) {
 
-    let head = interpolateHead(flow.per_zone, pump.curve);
+    let head = interpolateHead(flow.per_zone, p.curve);
+    if (!head) continue;
 
-    if (head === null || head < hyd.tdh) continue;
+    let margin = head / hyd.tdh;
 
-    let mid = Math.floor(pump.curve.length / 2);
-    let diff = Math.abs(flow.per_zone - pump.curve[mid].flow);
+    if (margin < 1) continue;
 
-    if (diff < bestScore) {
-      bestScore = diff;
-      best = pump;
+    let mid = Math.floor(p.curve.length / 2);
+    let diff = Math.abs(flow.per_zone - p.curve[mid].flow);
+
+    let score = diff + (margin - 1) * 10;
+
+    if (score < bestScore) {
+      bestScore = score;
+      best = p;
     }
   }
 
   return best;
 }
+
 
 function interpolateHead(flow, curve) {
 
@@ -286,6 +343,7 @@ function interpolateHead(flow, curve) {
 
   return curve[curve.length - 1].head;
 }
+
 
 
 function generateSystemCurve(flow, input) {
@@ -650,6 +708,10 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   if (pumpHead > hyd.tdh * 1.3) {
     report += "⚠️ Pump oversized → energy waste.\n";
     score -= 10;
+    if (pumpHead < hyd.tdh) {
+  report += "❌ Pump cannot meet required head.\n";
+  score -= 30;
+}
   }
 
   // =========================
@@ -1032,9 +1094,12 @@ async function exportPDF() {
   // =========================
   // 🔹 Title
   // =========================
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("SMART IRRIGATION DESIGN REPORT", 20, 20);
+ doc.setFont("helvetica", "bold");
+doc.setFontSize(14);
+doc.text("Smart Irrigation Report", 15, 15);
+
+doc.setDrawColor(0, 150, 255);
+doc.line(15, 18, 195, 18);
 
   // =========================
   // 🔹 Chart Image
