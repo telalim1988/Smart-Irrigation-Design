@@ -526,8 +526,7 @@ function runAIEngine(input) {
     // 🔹 الحسابات
     let flow = calculateFlow(tempInput);
     let hyd = calculateHydraulics(flow, tempInput);
-    let energy = calculateEnergy(flow, hyd, tempInput);
-
+    let energy = calculateEnergy(hyd, flow, tempInput);
     // 🔹 شرط السلامة
     if (hyd.velocity > 2 || hyd.velocity < 0.6) continue;
 
