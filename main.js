@@ -393,16 +393,14 @@ function drawFullCurve(pump, flow, hyd, input) {
 }
 
 
-function evaluateBEP(op, bep) {
-
+function getBEPStatus(op, bep) {
   if (!op || !bep) return "No Data";
 
   let diff = Math.abs(op.flow - bep.flow);
 
-  if (diff < 0.5) return "Near BEP (Optimal)";
-  if (diff < 1.5) return "Acceptable";
-
-  return "Far from BEP";
+  if (diff < 0.5) return "Near BEP ✅";
+  if (diff < 2) return "Acceptable ⚠️";
+  return "Far from BEP ❌";
 }
 
 // =========================
@@ -669,7 +667,9 @@ if (alert === "OK") {
 
   // 🔹 Recommendation
  
- let rec = "✔️ Design OK";
+if (pump_head > hyd.tdh * 1.5) {
+  rec = "⚠️ Pump oversized — reduce pump size";
+}
 
 if (alert !== "OK") rec = "Adjust velocity";
 
