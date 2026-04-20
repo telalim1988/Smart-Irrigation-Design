@@ -666,7 +666,7 @@ if (alert === "OK") {
 }
 
   // 🔹 Recommendation
- 
+ let rec = "OK";
 if (pump_head > hyd.tdh * 1.5) {
   rec = "⚠️ Pump oversized — reduce pump size";
 }
