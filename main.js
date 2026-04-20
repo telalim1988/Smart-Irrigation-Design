@@ -1051,3 +1051,14 @@ async function exportPDF() {
   // =========================
   doc.save("Irrigation_Report.pdf");
 }
+
+
+function safeExport() {
+  if (!window.current_design_data) {
+    alert("⚠️ Run calculation first");
+    return;
+  }
+
+  generateReport();
+  exportPDF();
+}
