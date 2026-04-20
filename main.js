@@ -784,16 +784,111 @@ function generateFullReport(flow, hyd, pump, op, input, energy, ai) {
 
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
-  
-let efficiencyLabel = "GOOD";
 
-let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+  let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+  let margin = pumpHead / hyd.tdh;
 
-if (pumpHead > hyd.tdh * 1.3) {
-  efficiencyLabel = "SUBOPTIMAL";
-} else if (ai.score > 85) {
-  efficiencyLabel = "EXCELLENT";
-}
+  // =========================
+  // 🔹 Pump Classification
+  // =========================
+  let pumpStatus = "WELL MATCHED";
+  let pumpComment = "";
+
+  if (margin > 1.3) {
+    pumpStatus = "OVERSIZED";
+    pumpComment = "The pump delivers significantly higher head than required.";
+  } else if (margin < 1.05) {
+    pumpStatus = "UNDERDESIGNED";
+    pumpComment = "The pump is very close to minimum required head.";
+  } else {
+    pumpStatus = "OPTIMAL";
+    pumpComment = "The pump is well matched to system requirements.";
+  }
+
+  // =========================
+  // 🔹 BEP Analysis
+  // =========================
+  let bepStatus = "UNKNOWN";
+  let bepComment = "";
+
+  if (op) {
+    let diff = Math.abs(op.flow - bep.flow);
+
+    if (diff < 1) {
+      bepStatus = "NEAR BEP";
+      bepComment = "Pump operates at optimal efficiency.";
+    } else if (diff < 3) {
+      bepStatus = "MODERATE";
+      bepComment = "Pump operates within acceptable efficiency range.";
+    } else {
+      bepStatus = "FAR FROM BEP";
+      bepComment = "Pump operates outside optimal efficiency range.";
+    }
+  }
+
+  // =========================
+  // 🔹 Efficiency Label
+  // =========================
+  let efficiencyLabel = "GOOD";
+
+  if (pumpStatus === "OVERSIZED" || bepStatus === "FAR FROM BEP") {
+    efficiencyLabel = "SUBOPTIMAL";
+  } else if (pumpStatus === "OPTIMAL" && bepStatus === "NEAR BEP") {
+    efficiencyLabel = "EXCELLENT";
+  }
+
+  // =========================
+  // 🔹 Chart Interpretation (Dynamic)
+  // =========================
+  let chartComment = "";
+
+  if (bepStatus === "NEAR BEP") {
+    chartComment = "The pump curve intersects the system curve near the BEP, indicating optimal operation.";
+  } else if (bepStatus === "FAR FROM BEP") {
+    chartComment = "The intersection occurs far from BEP, indicating inefficient operation.";
+  } else {
+    chartComment = "The intersection is within acceptable operating range.";
+  }
+
+  // =========================
+  // 🔹 Optimization Suggestion
+  // =========================
+  let optimizationBlock = "";
+
+  if (pumpStatus === "OVERSIZED") {
+    optimizationBlock = `
+9. PUMP OPTIMIZATION SCENARIO
+------------------------------
+The pump is oversized relative to system requirements.
+
+Recommended action:
+- Select a smaller pump closer to TDH
+- Improve energy efficiency
+`;
+  } else if (pumpStatus === "UNDERDESIGNED") {
+    optimizationBlock = `
+9. PUMP OPTIMIZATION SCENARIO
+------------------------------
+The pump is close to minimum required head.
+
+Recommended action:
+- Select a slightly higher head pump for safety margin
+`;
+  }
+
+  // =========================
+  // 🔹 Conclusion (Dynamic)
+  // =========================
+  let conclusion = "";
+
+  if (efficiencyLabel === "EXCELLENT") {
+    conclusion = "The system is optimally designed and operates at high efficiency. No modification required.";
+  } else if (efficiencyLabel === "GOOD") {
+    conclusion = "The system is stable and acceptable, with minor room for optimization.";
+  } else {
+    conclusion = "The system requires optimization to improve efficiency and performance.";
+  }
+
   return `
 ==============================
 SMART IRRIGATION DESIGN REPORT
@@ -801,148 +896,72 @@ SMART IRRIGATION DESIGN REPORT
 
 1. PROJECT OVERVIEW
 -------------------
-This report presents a full hydraulic and pump performance analysis 
-for the irrigation system based on the provided design inputs.
+This report presents a full hydraulic and pump performance analysis.
 
 2. INPUT DATA
 -------------
 ET0: ${input.et0}
-Crop Coefficient (Kc): ${input.kc}
+Kc: ${input.kc}
 Area: ${input.area} m²
-Operating Hours: ${input.hours} hr
 Zones: ${input.zones}
-Pipe Length: ${input.pipe_length} m
-Elevation: ${input.elevation} m
 Velocity: ${input.velocity} m/s
-Material: ${input.material}
 
 3. HYDRAULIC RESULTS
 --------------------
 Flow per Zone: ${flow.per_zone.toFixed(2)} m³/hr
-Total Dynamic Head (TDH): ${hyd.tdh.toFixed(2)} m
-Head Loss (hf): ${hyd.hf.toFixed(2)} m
-Selected Diameter: ${hyd.diameter.toFixed(3)} m
-
-The hydraulic design is ${
-    input.velocity >= 0.6 && input.velocity <= 2
-      ? "within acceptable engineering limits."
-      : "outside recommended velocity limits."
-  }
+TDH: ${hyd.tdh.toFixed(2)} m
+Head Loss: ${hyd.hf.toFixed(2)} m
+Diameter: ${hyd.diameter.toFixed(3)} m
 
 4. PUMP SELECTION
 -----------------
-Selected Pump: ${pump.name}
+Pump: ${pump.name}
+Pump Head: ${pumpHead.toFixed(2)} m
+TDH: ${hyd.tdh.toFixed(2)} m
 
-Pump Head at Duty Point: ${interpolateHead(flow.per_zone, pump.curve).toFixed(2)} m
-Required TDH: ${hyd.tdh.toFixed(2)} m
-
-${
-  interpolateHead(flow.per_zone, pump.curve) >= hyd.tdh
-    ? "The selected pump is capable of meeting system requirements."
-    : "The selected pump is NOT sufficient for system requirements."
-}
+Status: ${pumpStatus}
+${pumpComment}
 
 5. PUMP CURVE ANALYSIS
 ----------------------
-The pump curve (blue line) represents the relationship between flow and head.
+Operating Point: ${op?.flow?.toFixed(2) || "N/A"} m³/hr
+BEP: ${bep.flow} m³/hr
 
-The system curve (red dashed line) represents system resistance.
+Status: ${bepStatus}
+${bepComment}
 
-The intersection between both curves defines the operating point:
-
-Flow: ${op?.flow?.toFixed(2) || "N/A"} m³/hr  
-Head: ${op?.head?.toFixed(2) || "N/A"} m  
-
-Best Efficiency Point (BEP):
-Flow: ${bep.flow} m³/hr  
-Head: ${bep.head} m  
-
-${
-  op
-    ? Math.abs(op.flow - bep.flow) < 1
-      ? "The system operates near BEP → optimal efficiency."
-      : "The system operates away from BEP → reduced efficiency."
-    : "Operating point not clearly defined."
-}
+${chartComment}
 
 6. ENERGY ANALYSIS
 ------------------
-Power Consumption: ${energy.power.toFixed(2)} kW  
-Energy Usage: ${energy.energy.toFixed(2)} kWh  
-Operating Cost: ${energy.cost.toFixed(2)}  
+Power: ${energy.power.toFixed(2)} kW
+Energy: ${energy.energy.toFixed(2)} kWh
 
-${
-  energy.power < 1
-    ? "Energy consumption is efficient."
-    : "Energy consumption is relatively high."
-}
+${energy.power < 1 ? "Energy efficient operation." : "Energy consumption is relatively high."}
 
-The pump curve intersects the system curve at a flow lower than the BEP, 
-indicating operation on the left side of the performance curve. 
-This confirms that the pump is oversized and not operating at optimal efficiency.
+7. SYSTEM PERFORMANCE
+---------------------
+Hydraulic: ${input.velocity >= 0.6 && input.velocity <= 2 ? "Good" : "Needs Adjustment"}
+Pump Matching: ${pumpStatus}
+Efficiency Level: ${efficiencyLabel}
 
-
-7. KEY PERFORMANCE INDICATORS
------------------------------
-Hydraulic Efficiency: ${
-  input.velocity >= 0.6 && input.velocity <= 2 ? "Good" : "Needs Adjustment"
-}
-Pump Matching: ${
-  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
-    ? "Suboptimal"
-    : "Acceptable"
-}
-Energy Efficiency: ${energy.power < 1 ? "Good" : "Moderate"}
-System Reliability: High
-Overall Score: ${ai.score}/100
-
-8. AI ENGINEERING ASSESSMENT
-----------------------------
+8. AI ASSESSMENT
+----------------
 Score: ${ai.score}/100
 
 ${ai.text}
 
-9. PUMP OPTIMIZATION SCENARIO
-------------------------------
-The current pump operates above the required head, indicating oversizing.
+${optimizationBlock}
 
-A smaller pump with a head range of 9–11 m is recommended.
-
-Expected improvements:
-- Operation closer to BEP
-- Reduced energy consumption
-- Improved hydraulic efficiency
-
-10. RECOMMENDATIONS
-------------------
-${
-  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
-    ? "- Consider selecting a smaller pump to improve efficiency.\n"
-    : ""
-}
-${
-  input.velocity < 0.6 || input.velocity > 2
-    ? "- Adjust pipe diameter or velocity.\n"
-    : ""
-}
-- Optimize zones to align with BEP.
-- Monitor energy usage for long-term performance.
-
-11. CONCLUSION
+10. CONCLUSION
 --------------
-The system is hydraulically sound and operationally stable. 
-
-However, the pump selection is not optimal, as it operates above the required head 
-and away from the Best Efficiency Point (BEP).
-
-System optimization is recommended to improve efficiency and reduce energy losses.
+${conclusion}
 
 ==============================
 END OF REPORT
 ==============================
 `;
 }
-
 function downloadReport() {
   let text = document.getElementById("full_report").innerText;
 
