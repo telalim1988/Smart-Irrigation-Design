@@ -137,7 +137,11 @@ setText("analysis_text", analysis);
     pump: pump.name,
     energy: energy.energy
   };
+let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
 
+let report = generateFullReport(flow, hyd, pump, op, input, energy, ai);
+
+setText("full_report", report);
 }
 
 
@@ -765,5 +769,140 @@ setText("std_diameter", hyd.diameter.toFixed(3)); // ✅ إصلاح
 function getC(material) {
   return material === "pvc" ? 150 :
          material === "hdpe" ? 140 : 120;
+}
+
+
+
+function generateFullReport(flow, hyd, pump, op, input, energy, ai) {
+
+  let mid = Math.floor(pump.curve.length / 2);
+  let bep = pump.curve[mid];
+
+  return `
+==============================
+SMART IRRIGATION DESIGN REPORT
+==============================
+
+1. PROJECT OVERVIEW
+-------------------
+This report presents a full hydraulic and pump performance analysis 
+for the irrigation system based on the provided design inputs.
+
+2. INPUT DATA
+-------------
+ET0: ${input.et0}
+Crop Coefficient (Kc): ${input.kc}
+Area: ${input.area} m²
+Operating Hours: ${input.hours} hr
+Zones: ${input.zones}
+Pipe Length: ${input.pipe_length} m
+Elevation: ${input.elevation} m
+Velocity: ${input.velocity} m/s
+Material: ${input.material}
+
+3. HYDRAULIC RESULTS
+--------------------
+Flow per Zone: ${flow.per_zone.toFixed(2)} m³/hr
+Total Dynamic Head (TDH): ${hyd.tdh.toFixed(2)} m
+Head Loss (hf): ${hyd.hf.toFixed(2)} m
+Selected Diameter: ${hyd.diameter.toFixed(3)} m
+
+The hydraulic design is ${
+    input.velocity >= 0.6 && input.velocity <= 2
+      ? "within acceptable engineering limits."
+      : "outside recommended velocity limits."
+  }
+
+4. PUMP SELECTION
+-----------------
+Selected Pump: ${pump.name}
+
+Pump Head at Duty Point: ${interpolateHead(flow.per_zone, pump.curve).toFixed(2)} m
+Required TDH: ${hyd.tdh.toFixed(2)} m
+
+${
+  interpolateHead(flow.per_zone, pump.curve) >= hyd.tdh
+    ? "The selected pump is capable of meeting system requirements."
+    : "The selected pump is NOT sufficient for system requirements."
+}
+
+5. PUMP CURVE ANALYSIS
+----------------------
+The pump curve (blue line) represents the relationship between flow and head.
+
+The system curve (red dashed line) represents system resistance.
+
+The intersection between both curves defines the operating point:
+
+Flow: ${op?.flow?.toFixed(2) || "N/A"} m³/hr  
+Head: ${op?.head?.toFixed(2) || "N/A"} m  
+
+Best Efficiency Point (BEP):
+Flow: ${bep.flow} m³/hr  
+Head: ${bep.head} m  
+
+${
+  op
+    ? Math.abs(op.flow - bep.flow) < 1
+      ? "The system operates near BEP → optimal efficiency."
+      : "The system operates away from BEP → reduced efficiency."
+    : "Operating point not clearly defined."
+}
+
+6. ENERGY ANALYSIS
+------------------
+Power Consumption: ${energy.power.toFixed(2)} kW  
+Energy Usage: ${energy.energy.toFixed(2)} kWh  
+Operating Cost: ${energy.cost.toFixed(2)}  
+
+${
+  energy.power < 1
+    ? "Energy consumption is efficient."
+    : "Energy consumption is relatively high."
+}
+
+7. SYSTEM PERFORMANCE
+---------------------
+- Hydraulic Stability: GOOD
+- Pump Matching: ${
+    interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
+      ? "Oversized"
+      : "Acceptable"
+  }
+- Efficiency Level: ${ai.status}
+
+8. AI ENGINEERING ASSESSMENT
+----------------------------
+Score: ${ai.score}/100
+
+${ai.text}
+
+9. RECOMMENDATIONS
+------------------
+${
+  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
+    ? "- Consider selecting a smaller pump to improve efficiency.\n"
+    : ""
+}
+${
+  input.velocity < 0.6 || input.velocity > 2
+    ? "- Adjust pipe diameter or velocity.\n"
+    : ""
+}
+- Optimize zones to align with BEP.
+- Monitor energy usage for long-term performance.
+
+10. CONCLUSION
+--------------
+The system is ${
+    ai.score > 80 ? "well-designed and operationally efficient." :
+    ai.score > 60 ? "acceptable but requires optimization." :
+    "needs redesign for better performance."
+}
+
+==============================
+END OF REPORT
+==============================
+`;
 }
 
