@@ -1081,3 +1081,8 @@ function runFullExport() {
   exportPDF();
 }
 
+
+
+setInterval(() => {
+  document.querySelector(".status").innerText = "System Running";
+}, 3000);
