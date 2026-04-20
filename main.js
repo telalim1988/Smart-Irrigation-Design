@@ -119,7 +119,7 @@ let bepStatus = getBEPStatus(op, bep);
 updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // 🔥 Generate Analysis
 let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
-
+let report = generateFullReport(flow, hyd, pump, op, input, energy, ai);
  // عرض النتائج
 setText("analysis_text", ai.text);
 setText("ai_score", ai.score + " / 100");
@@ -137,9 +137,9 @@ setText("analysis_text", analysis);
     pump: pump.name,
     energy: energy.energy
   };
-let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
 
-let report = generateFullReport(flow, hyd, pump, op, input, energy, ai);
+
+
 
 setText("full_report", report);
 }
