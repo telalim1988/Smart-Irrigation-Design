@@ -71,6 +71,66 @@ let pumps = [
 
 ];
 
+// =========================
+// 🔹 MAIN ENGINE
+// =========================
+
+function calculate() {
+
+  let input = getInputs();
+  if (!input) return;
+
+  let flow = calculateFlow(input);
+  let hyd = calculateHydraulics(flow, input);
+
+ let pump = selectPump(flow, hyd);
+
+// 🔥 FALLBACK (ضعه هنا مباشرة)
+if (!pump) {
+  let best = pumps.reduce((best, p) => {
+    let h = interpolateHead(flow.per_zone, p.curve);
+
+    if (!best || h > best.head) {
+      return { pump: p, head: h };
+    }
+if (!pump) {
+  console.warn("⚠️ No exact pump match — fallback used");
+}
+    return best;
+  }, null);
+
+  pump = best ? best.pump : null;
+}
+
+  let energy = calculateEnergy(hyd, flow, input);
+  let opt = optimizeSystem(input, flow);
+
+  drawFullCurve(pump, flow, hyd, input);
+  
+ let op = findOperatingPoint(pump, system);
+
+let mid = Math.floor(pump.curve.length / 2);
+let bep = pump.curve[mid];
+
+let bepStatus = evaluateBEP(op, bep);
+updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
+  // 🔥 Generate Analysis
+let analysis = generateAnalysis(flow, hyd, pump, op, bep);
+
+// 🔥 Show in UI
+setText("analysis_text", analysis);
+  
+
+  // حفظ التصميم
+  window.current_design = {
+    zones: input.zones,
+    velocity: input.velocity,
+    diameter: hyd.diameter,
+    pump: pump.name,
+    energy: energy.energy
+  };
+
+}
 
 
 // =========================
@@ -506,66 +566,6 @@ function runFullAI() {
 }
 
 
-// =========================
-// 🔹 MAIN ENGINE
-// =========================
-
-function calculate() {
-
-  let input = getInputs();
-  if (!input) return;
-
-  let flow = calculateFlow(input);
-  let hyd = calculateHydraulics(flow, input);
-
- let pump = selectPump(flow, hyd);
-
-// 🔥 FALLBACK (ضعه هنا مباشرة)
-if (!pump) {
-  let best = pumps.reduce((best, p) => {
-    let h = interpolateHead(flow.per_zone, p.curve);
-
-    if (!best || h > best.head) {
-      return { pump: p, head: h };
-    }
-if (!pump) {
-  console.warn("⚠️ No exact pump match — fallback used");
-}
-    return best;
-  }, null);
-
-  pump = best ? best.pump : null;
-}
-
-  let energy = calculateEnergy(hyd, flow, input);
-  let opt = optimizeSystem(input, flow);
-
-  drawFullCurve(pump, flow, hyd, input);
-  
- let op = findOperatingPoint(pump, system);
-
-let mid = Math.floor(pump.curve.length / 2);
-let bep = pump.curve[mid];
-
-let bepStatus = evaluateBEP(op, bep);
-updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
-  // 🔥 Generate Analysis
-let analysis = generateAnalysis(flow, hyd, pump, op, bep);
-
-// 🔥 Show in UI
-setText("analysis_text", analysis);
-  
-
-  // حفظ التصميم
-  window.current_design = {
-    zones: input.zones,
-    velocity: input.velocity,
-    diameter: hyd.diameter,
-    pump: pump.name,
-    energy: energy.energy
-  };
-
-}
 
 // =========================
 // 🔍 ANALYSIS ENGINE
