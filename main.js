@@ -83,7 +83,7 @@ function calculate() {
   let flow = calculateFlow(input);
   let hyd = calculateHydraulics(flow, input);
 
- let pump = selectPump(flow, hyd);
+let pump = selectPump(hyd, flow);
 
 // 🔥 FALLBACK (ضعه هنا مباشرة)
 if (!pump) {
