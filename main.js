@@ -1052,9 +1052,16 @@ async function exportPDF() {
 
 
 function safeExport() {
+
   if (!window.current_design_data) {
-    alert("⚠️ Run calculation first");
-    return;
+
+    // تشغيل الحساب تلقائياً
+    calculate();
+
+    if (!window.current_design_data) {
+      alert("⚠️ Failed to generate data");
+      return;
+    }
   }
 
   generateReport();
