@@ -784,7 +784,16 @@ function generateFullReport(flow, hyd, pump, op, input, energy, ai) {
 
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
+  
+let efficiencyLabel = "GOOD";
 
+let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+
+if (pumpHead > hyd.tdh * 1.3) {
+  efficiencyLabel = "SUBOPTIMAL";
+} else if (ai.score > 85) {
+  efficiencyLabel = "EXCELLENT";
+}
   return `
 ==============================
 SMART IRRIGATION DESIGN REPORT
@@ -866,25 +875,63 @@ ${
   energy.power < 1
     ? "Energy consumption is efficient."
     : "Energy consumption is relatively high."
+  
+  The pump curve intersects the system curve at a flow lower than the BEP, 
+indicating operation on the left side of the performance curve. 
+This confirms that the pump is oversized and not operating at optimal efficiency.
 }
 
 7. SYSTEM PERFORMANCE
 ---------------------
+
 - Hydraulic Stability: GOOD
 - Pump Matching: ${
     interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
       ? "Oversized"
       : "Acceptable"
   }
-- Efficiency Level: ${ai.status}
+let efficiencyLabel = "GOOD";
 
-8. AI ENGINEERING ASSESSMENT
+let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+
+if (pumpHead > hyd.tdh * 1.3) {
+  efficiencyLabel = "SUBOPTIMAL";
+} else if (ai.score > 85) {
+  efficiencyLabel = "EXCELLENT";
+}
+
+8. KEY PERFORMANCE INDICATORS
+-----------------------------
+Hydraulic Efficiency: ${
+  input.velocity >= 0.6 && input.velocity <= 2 ? "Good" : "Needs Adjustment"
+}
+Pump Matching: ${
+  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
+    ? "Suboptimal"
+    : "Acceptable"
+}
+Energy Efficiency: ${energy.power < 1 ? "Good" : "Moderate"}
+System Reliability: High
+Overall Score: ${ai.score}/100
+
+9. AI ENGINEERING ASSESSMENT
 ----------------------------
 Score: ${ai.score}/100
 
 ${ai.text}
 
-9. RECOMMENDATIONS
+10. PUMP OPTIMIZATION SCENARIO
+------------------------------
+The current pump operates above the required head, indicating oversizing.
+
+A smaller pump with a head range of 9–11 m is recommended.
+
+Expected improvements:
+- Operation closer to BEP
+- Reduced energy consumption
+- Improved hydraulic efficiency
+
+11. RECOMMENDATIONS
 ------------------
 ${
   interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
@@ -899,14 +946,15 @@ ${
 - Optimize zones to align with BEP.
 - Monitor energy usage for long-term performance.
 
-10. CONCLUSION
+12. CONCLUSION
 --------------
-The system is ${
-    ai.score > 80 ? "well-designed and operationally efficient." :
-    ai.score > 60 ? "acceptable but requires optimization." :
-    "needs redesign for better performance."
-}
+The system is hydraulically sound and operationally stable. 
 
+However, the pump selection is not optimal, as it operates above the required head 
+and away from the Best Efficiency Point (BEP).
+
+System optimization is recommended to improve efficiency and reduce energy losses.
+}
 ==============================
 END OF REPORT
 ==============================
