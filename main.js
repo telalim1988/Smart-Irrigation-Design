@@ -107,7 +107,8 @@ if (!pump) {
 
   drawFullCurve(pump, flow, hyd, input);
   
- let op = findOperatingPoint(pump, system);
+let system = generateSystemCurve(flow, input);
+let op = findOperatingPoint(pump, system);
 
 let mid = Math.floor(pump.curve.length / 2);
 let bep = pump.curve[mid];
