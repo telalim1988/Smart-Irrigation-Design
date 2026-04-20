@@ -126,7 +126,7 @@ setText("ai_score", ai.score + " / 100");
 setText("ai_status", ai.status);
   
 // 🔥 Show in UI
-setText("analysis_text", analysis);
+setText("analysis_text", ai.text);
   
 
   // حفظ التصميم
@@ -136,6 +136,15 @@ setText("analysis_text", analysis);
     diameter: hyd.diameter,
     pump: pump.name,
     energy: energy.energy
+    
+  flow,
+  hyd,
+  pump,
+  op,
+  input,
+  energy,
+  ai
+};
   };
 
 
@@ -915,4 +924,26 @@ function downloadReport() {
   link.href = URL.createObjectURL(blob);
   link.download = "Irrigation_Report.txt";
   link.click();
+}
+
+function generateReport() {
+
+  if (!window.current_design_data) {
+    alert("Run calculation first");
+    return;
+  }
+
+  let d = window.current_design_data;
+
+  let report = generateFullReport(
+    d.flow,
+    d.hyd,
+    d.pump,
+    d.op,
+    d.input,
+    d.energy,
+    d.ai
+  );
+
+  setText("full_report", report);
 }
