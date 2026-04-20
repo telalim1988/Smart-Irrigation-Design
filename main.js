@@ -127,7 +127,7 @@ setText("ai_status", ai.status);
   
 // 🔥 Show in UI
 setText("analysis_text", ai.text);
-  
+setText("full_report", report);
 
   // حفظ التصميم
   window.current_design = {
@@ -147,9 +147,6 @@ setText("analysis_text", ai.text);
   ai
 };
  
-
-
-setText("full_report", report);
 }
 
 
