@@ -71,6 +71,20 @@ let pumps = [
 
 ];
 
+setInterval(() => {
+  let statusEl = document.querySelector(".status");
+
+  if (!statusEl) return;
+
+  if (window.current_design_data) {
+    statusEl.innerText = "✔ System Ready";
+  } else {
+    statusEl.innerText = "⏳ Waiting for Input";
+  }
+
+}, 3000);
+
+
 // =========================
 // 🔹 MAIN ENGINE
 // =========================
@@ -1083,15 +1097,3 @@ function runFullExport() {
 
 
 
-setInterval(() => {
-  let statusEl = document.querySelector(".status");
-
-  if (!statusEl) return;
-
-  if (window.current_design_data) {
-    statusEl.innerText = "✔ System Ready";
-  } else {
-    statusEl.innerText = "⏳ Waiting for Input";
-  }
-
-}, 3000);
