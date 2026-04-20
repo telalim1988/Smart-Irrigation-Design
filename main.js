@@ -120,10 +120,7 @@ updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // 🔥 Generate Analysis
 let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
 
-// عرض النتائج
-setText("analysis_text", ai.text);
-setText("ai_score", ai.score + " / 100");
-setText("ai_status", ai.status);
+
 // 🔥 Show in UI
 setText("analysis_text", analysis);
   
@@ -569,6 +566,10 @@ function runFullAI() {
   setText("comp_energy", result.energy.energy.toFixed(2));
 
   setText("recommendation", "✔ AI Optimized Design");
+  // عرض النتائج
+setText("analysis_text", ai.text);
+setText("ai_score", ai.score + " / 100");
+setText("ai_status", ai.status);
 }
 
 
