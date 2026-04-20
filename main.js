@@ -103,7 +103,10 @@ if (!pump) {
 
   let energy = calculateEnergy(hyd, flow, input);
   let opt = optimizeSystem(input, flow);
-
+  
+if (pump) {
+  drawFullCurve(pump, flow, hyd, input);
+}
   drawFullCurve(pump, flow, hyd, input);
   
 let system = generateSystemCurve(flow, input);
