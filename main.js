@@ -594,7 +594,7 @@ function generateAnalysis(flow, hyd, pump, op, bep) {
   }
 
   // 🔹 Hydraulic Insight
-  if (hyd.velocity > 2) {
+if (input.velocity > 2) {
     text += "Flow velocity is high, which may cause excessive head loss and pipe wear.\n\n";
   } else if (hyd.velocity < 0.6) {
     text += "Flow velocity is low, which may lead to sedimentation issues.\n\n";
