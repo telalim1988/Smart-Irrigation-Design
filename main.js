@@ -145,9 +145,7 @@ setText("analysis_text", ai.text);
   energy,
   ai
 };
-  };
-
-
+ 
 
 
 setText("full_report", report);
