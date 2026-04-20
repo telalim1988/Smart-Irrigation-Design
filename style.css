@@ -418,3 +418,13 @@ canvas {
   box-shadow: 0 0 12px rgba(255,180,71,0.7);
 }
 
+
+.header {
+  background-size: 200% 200%;
+  animation: gradientMove 6s infinite alternate;
+}
+
+@keyframes gradientMove {
+  0% { background-position: left; }
+  100% { background-position: right; }
+}
