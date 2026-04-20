@@ -994,3 +994,60 @@ function generateReport() {
 
   setText("full_report", report);
 }
+
+
+function getChartImage() {
+  let canvas = document.getElementById("pumpChart");
+  return canvas.toDataURL("image/png", 1.0);
+}
+
+
+
+
+async function exportPDF() {
+
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+
+  // =========================
+  // 🔹 Get Data
+  // =========================
+  let reportText = document.getElementById("full_report").innerText;
+  let chartImage = getChartImage();
+
+  // =========================
+  // 🔹 Title
+  // =========================
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("SMART IRRIGATION DESIGN REPORT", 20, 20);
+
+  // =========================
+  // 🔹 Chart Image
+  // =========================
+  doc.addImage(chartImage, "PNG", 15, 30, 180, 90);
+
+  // =========================
+  // 🔹 Report Text
+  // =========================
+  doc.setFont("courier", "normal");
+  doc.setFontSize(9);
+
+  let y = 130;
+
+  let lines = doc.splitTextToSize(reportText, 180);
+
+  lines.forEach(line => {
+    if (y > 280) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text(line, 15, y);
+    y += 5;
+  });
+
+  // =========================
+  // 🔹 Save
+  // =========================
+  doc.save("Irrigation_Report.pdf");
+}
