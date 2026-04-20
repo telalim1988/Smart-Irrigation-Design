@@ -87,15 +87,14 @@ let pump = selectPump(hyd, flow);
 
 // 🔥 FALLBACK (ضعه هنا مباشرة)
 if (!pump) {
+  console.warn("⚠️ No exact pump match — fallback used");
+
   let best = pumps.reduce((best, p) => {
     let h = interpolateHead(flow.per_zone, p.curve);
 
     if (!best || h > best.head) {
       return { pump: p, head: h };
     }
-if (!pump) {
-  console.warn("⚠️ No exact pump match — fallback used");
-}
     return best;
   }, null);
 
