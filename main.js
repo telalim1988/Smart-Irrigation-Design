@@ -875,7 +875,7 @@ ${
   energy.power < 1
     ? "Energy consumption is efficient."
     : "Energy consumption is relatively high."
-  
+  }
   The pump curve intersects the system curve at a flow lower than the BEP, 
 indicating operation on the left side of the performance curve. 
 This confirms that the pump is oversized and not operating at optimal efficiency.
@@ -890,15 +890,7 @@ This confirms that the pump is oversized and not operating at optimal efficiency
       ? "Oversized"
       : "Acceptable"
   }
-let efficiencyLabel = "GOOD";
 
-let pumpHead = interpolateHead(flow.per_zone, pump.curve);
-
-if (pumpHead > hyd.tdh * 1.3) {
-  efficiencyLabel = "SUBOPTIMAL";
-} else if (ai.score > 85) {
-  efficiencyLabel = "EXCELLENT";
-}
 
 8. KEY PERFORMANCE INDICATORS
 -----------------------------
