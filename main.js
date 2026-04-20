@@ -118,8 +118,12 @@ let bep = pump.curve[mid];
 let bepStatus = getBEPStatus(op, bep);
 updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
   // 🔥 Generate Analysis
-let analysis = generateAnalysis(flow, hyd, pump, op, bep);
+let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
 
+// عرض النتائج
+setText("analysis_text", ai.text);
+setText("ai_score", ai.score + " / 100");
+setText("ai_status", ai.status);
 // 🔥 Show in UI
 setText("analysis_text", analysis);
   
