@@ -875,21 +875,21 @@ ${
   energy.power < 1
     ? "Energy consumption is efficient."
     : "Energy consumption is relatively high."
-  }
-  The pump curve intersects the system curve at a flow lower than the BEP, 
+}
+
+The pump curve intersects the system curve at a flow lower than the BEP, 
 indicating operation on the left side of the performance curve. 
 This confirms that the pump is oversized and not operating at optimal efficiency.
-}
 
 7. SYSTEM PERFORMANCE
 ---------------------
-
 - Hydraulic Stability: GOOD
 - Pump Matching: ${
-    interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
-      ? "Oversized"
-      : "Acceptable"
-  }
+  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
+    ? "Oversized"
+    : "Acceptable"
+}
+- Efficiency Level: ${efficiencyLabel}
 
 
 8. KEY PERFORMANCE INDICATORS
