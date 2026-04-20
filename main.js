@@ -129,22 +129,24 @@ setText("ai_status", ai.status);
 setText("analysis_text", ai.text);
 setText("full_report", report);
 
-  // حفظ التصميم
-  window.current_design = {
-    zones: input.zones,
-    velocity: input.velocity,
-    diameter: hyd.diameter,
-    pump: pump.name,
-    energy: energy.energy,
-    
- window.current_design_data = {
-  flow,
-  hyd,
-  pump,
-  op,
-  input,
-  energy,
-  ai
+// حفظ التصميم (مختصر)
+window.current_design = {
+  zones: input.zones,
+  velocity: input.velocity,
+  diameter: hyd.diameter,
+  pump: pump.name,
+  energy: energy.energy
+};
+
+// حفظ كل البيانات (للتقرير و PDF)
+window.current_design_data = {
+  flow: flow,
+  hyd: hyd,
+  pump: pump,
+  op: op,
+  input: input,
+  energy: energy,
+  ai: ai
 };
  
 }
@@ -1067,3 +1069,15 @@ function safeExport() {
   generateReport();
   exportPDF();
 }
+
+
+function runFullExport() {
+
+  if (!window.current_design_data) {
+    calculate();
+  }
+
+  generateReport();
+  exportPDF();
+}
+
