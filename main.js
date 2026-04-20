@@ -881,18 +881,8 @@ The pump curve intersects the system curve at a flow lower than the BEP,
 indicating operation on the left side of the performance curve. 
 This confirms that the pump is oversized and not operating at optimal efficiency.
 
-7. SYSTEM PERFORMANCE
----------------------
-- Hydraulic Stability: GOOD
-- Pump Matching: ${
-  interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
-    ? "Oversized"
-    : "Acceptable"
-}
-- Efficiency Level: ${efficiencyLabel}
 
-
-8. KEY PERFORMANCE INDICATORS
+7. KEY PERFORMANCE INDICATORS
 -----------------------------
 Hydraulic Efficiency: ${
   input.velocity >= 0.6 && input.velocity <= 2 ? "Good" : "Needs Adjustment"
@@ -906,13 +896,13 @@ Energy Efficiency: ${energy.power < 1 ? "Good" : "Moderate"}
 System Reliability: High
 Overall Score: ${ai.score}/100
 
-9. AI ENGINEERING ASSESSMENT
+8. AI ENGINEERING ASSESSMENT
 ----------------------------
 Score: ${ai.score}/100
 
 ${ai.text}
 
-10. PUMP OPTIMIZATION SCENARIO
+9. PUMP OPTIMIZATION SCENARIO
 ------------------------------
 The current pump operates above the required head, indicating oversizing.
 
@@ -923,7 +913,7 @@ Expected improvements:
 - Reduced energy consumption
 - Improved hydraulic efficiency
 
-11. RECOMMENDATIONS
+10. RECOMMENDATIONS
 ------------------
 ${
   interpolateHead(flow.per_zone, pump.curve) > hyd.tdh * 1.3
@@ -938,7 +928,7 @@ ${
 - Optimize zones to align with BEP.
 - Monitor energy usage for long-term performance.
 
-12. CONCLUSION
+11. CONCLUSION
 --------------
 The system is hydraulically sound and operationally stable. 
 
@@ -946,7 +936,7 @@ However, the pump selection is not optimal, as it operates above the required he
 and away from the Best Efficiency Point (BEP).
 
 System optimization is recommended to improve efficiency and reduce energy losses.
-}
+
 ==============================
 END OF REPORT
 ==============================
