@@ -605,10 +605,11 @@ if (input.velocity > 2) {
   }
 
   // 🔹 Final Recommendation
-  if (pump) {
-    text += "Selected pump (" + pump.name + ") cannot deliver the required head (TDH). ";
-text += "A higher capacity pump is recommended.\n";
-  }
+ if (pump && op) {
+  text += "Pump is operating within system requirements.\n";
+} else {
+  text += "Selected pump cannot meet system requirements.\n";
+}
 
   return text;
 }
