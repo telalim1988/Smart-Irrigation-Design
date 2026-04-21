@@ -107,110 +107,142 @@ setInterval(() => {
 // =========================
 
 function calculate() {
+
   if (isRunning) return;
-isRunning = true;
-updateStatus("⏳ Calculating...", "#ffaa00");
+  isRunning = true;
 
-  
-  let input = getInputs();
- if (!input) {
-  updateStatus("❌ Invalid Input", "red");
-  isRunning = false;
-  return;
-}
+  updateStatus("⏳ Calculating...", "#ffaa00");
 
-  let flow = calculateFlow(input);
-  let hyd = calculateHydraulics(flow, input);
+  try {
 
-let pump = selectPump(hyd, flow);
+    // =========================
+    // 🔹 INPUT
+    // =========================
+    let input = getInputs();
 
-// 🔥 FALLBACK (ضعه هنا مباشرة)
-if (!pump) {
-  console.warn("⚠️ No exact pump match — fallback used");
-
-  let best = pumps.reduce((best, p) => {
-    let h = interpolateHead(flow.per_zone, p.curve);
-
-    if (!best || h > best.head) {
-      return { pump: p, head: h };
+    if (!input) {
+      updateStatus("❌ Invalid Input", "red");
+      return;
     }
-    return best;
-  }, null);
 
-  pump = best ? best.pump : null;
+    // =========================
+    // 🔹 CORE CALCULATION
+    // =========================
+    let flow = calculateFlow(input);
+    let hyd = calculateHydraulics(flow, input);
 
-  if (!pump) {
-    alert("No suitable pump found");
+    let pump = selectPump(hyd, flow);
+
+    // =========================
+    // 🔹 FALLBACK PUMP
+    // =========================
+    if (!pump) {
+      console.warn("⚠️ No exact pump match — fallback used");
+
+      let best = pumps.reduce((best, p) => {
+        let h = interpolateHead(flow.per_zone, p.curve);
+
+        if (!best || h > best.head) {
+          return { pump: p, head: h };
+        }
+        return best;
+      }, null);
+
+      pump = best ? best.pump : null;
+
+      if (!pump) {
+        alert("No suitable pump found");
+        return;
+      }
+    }
+
+    // =========================
+    // 🔹 ENERGY & OPTIMIZATION
+    // =========================
+    let energy = calculateEnergy(hyd, flow, input);
+    let opt = optimizeSystem(input, flow);
+
+    // =========================
+    // 🔹 DRAW CHART
+    // =========================
+    if (pump) {
+      drawFullCurve(pump, flow, hyd, input);
+    }
+
+    // =========================
+    // 🔹 OPERATING POINT
+    // =========================
+    let system = generateSystemCurve(flow, input);
+    let op = findOperatingPoint(pump, system);
+
+    if (!op) {
+      console.warn("No operating point found");
+    }
+
+    let mid = Math.floor(pump.curve.length / 2);
+    let bep = pump.curve[mid];
+
+    let bepStatus = getBEPStatus(op, bep);
+
+    // =========================
+    // 🔹 UPDATE UI
+    // =========================
+    updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
+
+    // =========================
+    // 🔹 AI ANALYSIS
+    // =========================
+    let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
+
+    let report = generateFullReport(
+      flow,
+      hyd,
+      pump,
+      op,
+      input,
+      energy,
+      ai
+    );
+
+    setText("analysis_text", ai.text);
+    setText("ai_score", ai.score + " / 100");
+    setText("ai_status", ai.status);
+    setText("full_report", report);
+
+    // =========================
+    // 🔹 SAVE DATA
+    // =========================
+    window.current_design = {
+      zones: input.zones,
+      velocity: input.velocity,
+      diameter: hyd.diameter,
+      pump: pump.name,
+      energy: energy.energy
+    };
+
+    window.current_design_data = {
+      flow: flow,
+      hyd: hyd,
+      pump: pump,
+      op: op,
+      input: input,
+      energy: energy,
+      ai: ai
+    };
+
+    updateStatus("✔ System Ready", "#00ff88");
+
+  } catch (err) {
+
+    console.error("Calculation Error:", err);
+    updateStatus("❌ Error occurred", "red");
+
+  } finally {
+
+    // 🔥 يضمن عدم تجميد النظام
     isRunning = false;
-    return;
   }
 }
-    if (!best || h > best.head) {
-      return { pump: p, head: h };
-    }
-    return best;
-  }, null);
-
-  pump = best ? best.pump : null;
-}
-
-  let energy = calculateEnergy(hyd, flow, input);
-  let opt = optimizeSystem(input, flow);
-  
-if (pump) {
-  drawFullCurve(pump, flow, hyd, input);
-}
-  
-  
-let system = generateSystemCurve(flow, input);
-let op = findOperatingPoint(pump, system);
-if (!op) {
-  console.warn("No operating point found");
-}
-let mid = Math.floor(pump.curve.length / 2);
-let bep = pump.curve[mid];
-
-let bepStatus = getBEPStatus(op, bep);
-updateUI(flow, hyd, pump, energy, opt, input, bepStatus);
-  // 🔥 Generate Analysis
-let ai = runAIAnalysis(flow, hyd, pump, op, input, energy);
-let report = generateFullReport(flow, hyd, pump, op, input, energy, ai);
- // عرض النتائج
-setText("analysis_text", ai.text);
-setText("ai_score", ai.score + " / 100");
-setText("ai_status", ai.status);
-  
-// 🔥 Show in UI
-setText("analysis_text", ai.text);
-setText("full_report", report);
-
-// حفظ التصميم (مختصر)
-window.current_design = {
-  zones: input.zones,
-  velocity: input.velocity,
-  diameter: hyd.diameter,
-  pump: pump.name,
-  energy: energy.energy
-};
-
-// حفظ كل البيانات (للتقرير و PDF)
-window.current_design_data = {
-  flow: flow,
-  hyd: hyd,
-  pump: pump,
-  op: op,
-  input: input,
-  energy: energy,
-  ai: ai
-};
- updateStatus("✔ System Ready", "#00ff88");
-  isRunning = false;
-}
-
-
-// =========================
-// 🔹 INPUTS
-// =========================
 
 function getInputs() {
 
