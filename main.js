@@ -113,7 +113,11 @@ updateStatus("⏳ Calculating...", "#ffaa00");
 
   
   let input = getInputs();
-  if (!input) return;
+ if (!input) {
+  updateStatus("❌ Invalid Input", "red");
+  isRunning = false;
+  return;
+}
 
   let flow = calculateFlow(input);
   let hyd = calculateHydraulics(flow, input);
