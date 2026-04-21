@@ -160,7 +160,7 @@ if (!pump) {
 if (pump) {
   drawFullCurve(pump, flow, hyd, input);
 }
-  drawFullCurve(pump, flow, hyd, input);
+  
   
 let system = generateSystemCurve(flow, input);
 let op = findOperatingPoint(pump, system);
