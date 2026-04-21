@@ -634,7 +634,7 @@ function runAIEngine(input) {
     let hyd = calculateHydraulics(flow, tempInput);
     let energy = calculateEnergy(hyd, flow, tempInput);
     // 🔹 شرط السلامة
-    if (hyd.velocity > 2 || hyd.velocity < 0.6) continue;
+    if (tempInput.velocity > 2 || tempInput.velocity < 0.6) continue;
 
     // 🔹 اختيار الأفضل (أقل طاقة)
     if (!best || energy.energy < best.energy.energy) {
