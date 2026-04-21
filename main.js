@@ -130,9 +130,20 @@ if (!pump) {
 
   let best = pumps.reduce((best, p) => {
     let h = interpolateHead(flow.per_zone, p.curve);
-if (!pump) {
-  alert("No suitable pump found");
-  return;
+
+    if (!best || h > best.head) {
+      return { pump: p, head: h };
+    }
+    return best;
+  }, null);
+
+  pump = best ? best.pump : null;
+
+  if (!pump) {
+    alert("No suitable pump found");
+    isRunning = false;
+    return;
+  }
 }
     if (!best || h > best.head) {
       return { pump: p, head: h };
