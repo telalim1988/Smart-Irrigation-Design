@@ -750,25 +750,28 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   // =========================
   // 🔹 OVERSIZING CHECK
   // =========================
-  let pumpHead = interpolateHead(flow.per_zone, pump.curve);
-
-  if (pumpHead > hyd.tdh * 1.3) {
-    report += "⚠️ Pump oversized → energy waste.\n";
-    score -= 10;
-    if (pumpHead < hyd.tdh) {
-  report += "❌ Pump cannot meet required head.\n";
-  score -= 30;
-}
-    // =========================
-// 🔹 SAFETY MARGIN CHECK (🔥 جديد)
+ // =========================
+// 🔹 PUMP MATCHING ANALYSIS (🔥 مطور)
 // =========================
+let pumpHead = interpolateHead(flow.per_zone, pump.curve);
 let margin = pumpHead / hyd.tdh;
 
-if (margin < 1.05) {
+// Oversized
+if (margin > 1.3) {
+  report += "⚠️ Pump oversized → energy waste.\n";
+  score -= 10;
+}
+
+// Low safety margin
+else if (margin < 1.05) {
   report += "⚠️ Pump operates with very low safety margin (risk under load).\n";
   score -= 10;
 }
-  }
+
+// Optimal
+else {
+  report += "✅ Pump operates within safe and efficient margin.\n";
+}
 
   // =========================
   // 🔹 ENERGY
