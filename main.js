@@ -759,6 +759,15 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   report += "❌ Pump cannot meet required head.\n";
   score -= 30;
 }
+    // =========================
+// 🔹 SAFETY MARGIN CHECK (🔥 جديد)
+// =========================
+let margin = pumpHead / hyd.tdh;
+
+if (margin < 1.05) {
+  report += "⚠️ Pump operates with very low safety margin (risk under load).\n";
+  score -= 10;
+}
   }
 
   // =========================
