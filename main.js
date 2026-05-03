@@ -860,6 +860,9 @@ else if (kpi.HL_ratio > 0.3) {
 else {
   report += "✅ Head loss within optimal range\n";
 }
+  if (kpi.HL_ratio > 0.5) {
+  score = Math.min(score, 60);
+}
   // =========================
   // 🔹 PUMP PERFORMANCE (BEP)
   // =========================
