@@ -209,7 +209,11 @@ function calculate() {
 let summary = `
 Score: ${ai.score}/100
 
-Hydraulics: ${kpi.HL_ratio > 0.4 ? "⚠️ High Loss" : "✅ OK"}
+Hydraulics: ${
+  kpi.HL_ratio > 0.35 ? "⚠️ High Loss" :
+  kpi.HL_ratio > 0.25 ? "⚠️ Moderate" :
+  "✅ Optimal"
+}
 Pump: ${kpi.pumpMargin > 1.3 ? "⚠️ Oversized" : "✅ OK"}
 Irrigation: ${kpi.balance > 1.1 ? "⚠️ Over" : (kpi.balance < 0.9 ? "⚠️ Under" : "✅ Balanced")}
 Energy: ${energy.power > 1 ? "⚠️ High" : "✅ Efficient"}
