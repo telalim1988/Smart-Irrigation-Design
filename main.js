@@ -387,23 +387,32 @@ function selectPump(hyd, flow) {
   let best = null;
   let bestScore = Infinity;
 
-  for (let p of pumps) {
+  for (let pump of pumps) {
 
-    let head = interpolateHead(flow.per_zone, p.curve);
-    if (!head) continue;
+    // 🔹 حساب Head عند التدفق المطلوب
+    let pumpHead = interpolateHead(flow.per_zone, pump.curve);
 
-    let margin = head / hyd.tdh;
+    let margin = pumpHead / hyd.tdh;
 
-    if (margin < 1) continue;
+    // 🔹 تحديد BEP (منتصف الكيرف)
+    let mid = Math.floor(pump.curve.length / 2);
+    let bep = pump.curve[mid];
 
-    let mid = Math.floor(p.curve.length / 2);
-    let diff = Math.abs(flow.per_zone - p.curve[mid].flow);
+    // 🔹 الفرق عن BEP
+    let diff = Math.abs(flow.per_zone - bep.flow);
 
-let score = (diff / bep.flow) * 50 + (margin - 1) * 50;
+    let deviation = diff / bep.flow;
+
+    // 🔹 Score محسّن
+    let score =
+      (deviation * 60) +        // BEP أهم
+      (Math.abs(margin - 1) * 40); // Margin أقل أهمية
+
+    if (margin < 1) continue; // غير كافي
 
     if (score < bestScore) {
       bestScore = score;
-      best = p;
+      best = pump;
     }
   }
 
