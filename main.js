@@ -378,7 +378,7 @@ function selectPump(hyd, flow) {
     let mid = Math.floor(p.curve.length / 2);
     let diff = Math.abs(flow.per_zone - p.curve[mid].flow);
 
-    let score = diff + (margin - 1) * 10;
+let score = (diff / bep.flow) * 50 + (margin - 1) * 50;
 
     if (score < bestScore) {
       bestScore = score;
