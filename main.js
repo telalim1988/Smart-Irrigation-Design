@@ -343,19 +343,40 @@ function calculateHydraulics(flow, input) {
 
   let C = getC(input.material);
 
-  let d = Math.sqrt((4 * flow.m3s) / (Math.PI * input.velocity));
+  let selected_d = standard_diameters[0];
+  let hf = 0;
+  let tdh = 0;
 
-  let std_d = standard_diameters.find(x => x >= d)
-    || standard_diameters.at(-1);
+  // 🔁 Loop لاختيار القطر المناسب
+  for (let d of standard_diameters) {
 
-  let hf = 10.67 * input.pipe_length * Math.pow(flow.m3s, 1.852) /
-           (Math.pow(C, 1.852) * Math.pow(std_d, 4.87));
+    let hf_temp = 10.67 * input.pipe_length * Math.pow(flow.m3s, 1.852) /
+                  (Math.pow(C, 1.852) * Math.pow(d, 4.87));
 
-  let tdh = hf + input.elevation;
+    let tdh_temp = hf_temp + input.elevation;
 
-  return { diameter: std_d, hf, tdh };
+    let HL_ratio = hf_temp / tdh_temp;
+
+    // 🎯 شرط التصميم
+    if (HL_ratio <= 0.35) {
+      selected_d = d;
+      hf = hf_temp;
+      tdh = tdh_temp;
+      break;
+    }
+
+    // fallback → أكبر قطر
+    selected_d = d;
+    hf = hf_temp;
+    tdh = tdh_temp;
+  }
+
+  return {
+    diameter: selected_d,
+    hf,
+    tdh
+  };
 }
-
 
 // =========================
 // 🔹 PUMP
