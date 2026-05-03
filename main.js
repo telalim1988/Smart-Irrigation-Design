@@ -210,8 +210,9 @@ let summary = `
 Score: ${ai.score}/100
 
 Hydraulics: ${
-  kpi.HL_ratio > 0.35 ? "⚠️ High Loss" :
-  kpi.HL_ratio > 0.25 ? "⚠️ Moderate" :
+  kpi.HL_ratio > 0.5 ? "❌ Critical" :
+  kpi.HL_ratio > 0.4 ? "⚠️ High" :
+  kpi.HL_ratio > 0.3 ? "⚠️ Moderate" :
   "✅ Optimal"
 }
 Pump: ${kpi.pumpMargin > 1.3 ? "⚠️ Oversized" : "✅ OK"}
