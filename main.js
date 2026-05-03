@@ -904,6 +904,7 @@ else {
   // 🔹 IRRIGATION BALANCE (NEW)
 if (kpi.balance > 1.1) {
   report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
+}
   score -= 10;
 }
 else if (kpi.balance < 0.9) {
@@ -1057,7 +1058,11 @@ function generateFullReport(flow, hyd, pump, op, input, energy, ai) {
 let kpi = computeKPIs(flow, hyd, pump, input, energy);
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
+let operationMode = document.getElementById("mode").value;
 
+let modeComment = operationMode === "zone"
+  ? "Irrigation is applied sequentially across zones."
+  : "Irrigation is applied to the full system simultaneously.";
   let pumpHead = interpolateHead(flow.per_zone, pump.curve);
   let margin = pumpHead / hyd.tdh;
 
