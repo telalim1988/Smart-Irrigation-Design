@@ -1088,7 +1088,8 @@ if (alert === "OK") {
   // 🔹 Recommendation
  let rec = "OK";
 if (pump_head > hyd.tdh * 1.5) {
-  rec = "⚠️ Pump oversized — reduce pump size";
+ if (kpi.pumpMargin > 1.5) {
+  rec = "Select a lower head pump (~6 m) to match system TDH";
 }
 
 if (alert !== "OK") rec = "Adjust velocity";
