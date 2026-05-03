@@ -1161,6 +1161,17 @@ else if (efficiencyLabel === "GOOD") {
 else {
   conclusion = "The system requires optimization due to hydraulic or irrigation imbalance.";
 }
+  let irrigationComment = "";
+
+if (kpi.balance > 1.1) {
+  irrigationComment = "The system delivers excess water, which may lead to inefficiency or waterlogging.";
+}
+else if (kpi.balance < 0.9) {
+  irrigationComment = "The system may not meet crop water requirements.";
+}
+else {
+  irrigationComment = "Water supply matches crop demand.";
+}
 
   return `
 ==============================
