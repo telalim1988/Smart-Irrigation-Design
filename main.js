@@ -1355,6 +1355,8 @@ END OF REPORT
 ==============================
 `;
 }
+
+  
 function downloadReport() {
   let text = document.getElementById("full_report").innerText;
 
@@ -1365,6 +1367,7 @@ function downloadReport() {
   link.download = "Irrigation_Report.txt";
   link.click();
 }
+  
 
 function generateReport() {
 
