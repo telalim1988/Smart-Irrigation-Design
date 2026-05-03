@@ -747,8 +747,7 @@ function computeKPIs(flow, hyd, pump, input, energy) {
 function runAIAnalysis(flow, hyd, pump, op, input, energy) {
 
   let report = "";
-  let score = 100;
-
+ let score = 85;
   let kpi = computeKPIs(flow, hyd, pump, input, energy);
 
   // =========================
@@ -840,6 +839,11 @@ else if (kpi.balance < 0.9) {
 else {
   report += "✅ Irrigation demand matched\n";
 }
+  // 🔹 SYSTEM LOGIC LINK (NEW)
+if (kpi.pumpMargin > 1.2 && kpi.balance > 1.05) {
+  report += "⚠️ Excess pressure likely causing over-irrigation\n";
+  score -= 5;
+}
 
   // =========================
   // 🔹 FINAL RATING
@@ -849,7 +853,9 @@ else {
   if (score < 85) status = "GOOD";
   if (score < 70) status = "MODERATE";
   if (score < 50) status = "POOR";
-
+// 🔹 Clamp score
+if (score > 100) score = 100;
+if (score < 0) score = 0;
   return {
     text: report,
     score: score,
