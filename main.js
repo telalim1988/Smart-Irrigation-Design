@@ -904,7 +904,7 @@ else {
   // 🔹 IRRIGATION BALANCE (NEW)
 if (kpi.balance > 1.1) {
   report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
-}
+
   score -= 10;
 }
 else if (kpi.balance < 0.9) {
