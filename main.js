@@ -845,18 +845,21 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   // =========================
   // 🔹 HEAD LOSS RATIO
   // =========================
-  if (kpi.HL_ratio > 0.35) {
-    report += "⚠️ High head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
-    score -= 10;
-  }
-  else if (kpi.HL_ratio > 0.25) {
-    report += "⚠️ Moderate head loss\n";
-    score -= 5;
-  }
-  else {
-    report += "✅ Head loss within optimal range\n";
-  }
-
+  if (kpi.HL_ratio > 0.5) {
+  report += "❌ Critical head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
+  score -= 20;
+}
+else if (kpi.HL_ratio > 0.4) {
+  report += "⚠️ High head loss\n";
+  score -= 12;
+}
+else if (kpi.HL_ratio > 0.3) {
+  report += "⚠️ Moderate head loss\n";
+  score -= 6;
+}
+else {
+  report += "✅ Head loss within optimal range\n";
+}
   // =========================
   // 🔹 PUMP PERFORMANCE (BEP)
   // =========================
