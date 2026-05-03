@@ -1095,11 +1095,18 @@ let kpi = computeKPIs(flow, hyd, pump, input, energy);
   // =========================
   let efficiencyLabel = "GOOD";
 
-  if (pumpStatus === "OVERSIZED" || bepStatus === "FAR FROM BEP") {
-    efficiencyLabel = "SUBOPTIMAL";
-  } else if (pumpStatus === "OPTIMAL" && bepStatus === "NEAR BEP") {
-    efficiencyLabel = "EXCELLENT";
-  }
+if (
+  pumpStatus === "OPTIMAL" &&
+  bepStatus === "NEAR BEP" &&
+  kpi.HL_ratio < 0.3 &&
+  kpi.balance >= 0.95 &&
+  kpi.balance <= 1.05
+) {
+  efficiencyLabel = "EXCELLENT";
+}
+else if (kpi.balance > 1.1 || kpi.HL_ratio > 0.35) {
+  efficiencyLabel = "SUBOPTIMAL";
+}
 
   // =========================
   // 🔹 Chart Interpretation (Dynamic)
