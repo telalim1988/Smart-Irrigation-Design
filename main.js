@@ -463,7 +463,7 @@ function findOperatingPoint(pump, system) {
 
     let diff = Math.abs(pumpHead - systemHead);
 
-    if (diff < 0.5) {
+if (diff / systemHead < 0.05) {
       return { flow: q, head: pumpHead };
     }
   }
