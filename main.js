@@ -1000,10 +1000,17 @@ else if (kpi.balance > 1.05) {
   // =========================
   // 🔹 SYSTEM LOGIC LINK
   // =========================
-  if (kpi.pumpMargin > 1.2 && kpi.balance > 1.05) {
-    report += "⚠️ Excess pressure likely causing over-irrigation\n";
-    score -= 5;
-  }
+  if (kpi.pumpMargin > 1.5) {
+  report += "❌ Pump severely oversized (unacceptable design)\n";
+  score -= 20;
+}
+else if (kpi.pumpMargin > 1.3) {
+  report += "⚠️ Pump slightly oversized\n";
+  score -= 8;
+}
+  if (kpi.pumpMargin > 1.5) {
+  score = Math.min(score, 60);
+}
 
   // =========================
   // 🔹 FINAL STATUS
