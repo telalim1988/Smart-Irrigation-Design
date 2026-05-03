@@ -389,42 +389,75 @@ function selectPump(hyd, flow) {
 
   for (let pump of pumps) {
 
-    // 🔹 حساب Head عند التدفق المطلوب
+    // 🔹 Head عند التدفق
     let pumpHead = interpolateHead(flow.per_zone, pump.curve);
-
     let margin = pumpHead / hyd.tdh;
 
-    // 🔹 تحديد BEP (منتصف الكيرف)
+    // =========================
+    // 🔴 HARD CONSTRAINTS
+    // =========================
+    if (margin < 1.05) continue;   // ضغط غير كافي
+    if (margin > 1.8) continue;    // oversized خطير
+
+    // =========================
+    // 🔹 BEP
+    // =========================
     let mid = Math.floor(pump.curve.length / 2);
     let bep = pump.curve[mid];
 
-    // 🔹 الفرق عن BEP
-    let diff = Math.abs(flow.per_zone - bep.flow);
+    let flowDiff = Math.abs(flow.per_zone - bep.flow);
+    let flowDeviation = flowDiff / bep.flow;
 
-    let deviation = diff / bep.flow;
-    if (margin > 1.8) continue;
+    // =========================
+    // 🔹 HEAD MATCH (الأهم)
+    // =========================
+    let headDiff = Math.abs(pumpHead - hyd.tdh);
+    let headDeviation = headDiff / hyd.tdh;
 
-    // 🔹 Score محسّن
-    let score = 0;
+    // =========================
+    // 🔹 SCORE (Weighted)
+    // =========================
+    let score =
+      (headDeviation * 0.7) +   // أهم عامل
+      (flowDeviation * 0.3);
 
-// 🔹 BEP deviation (الأهم)
-score += deviation * 70;
+    // =========================
+    // 🔹 Penalty إضافي
+    // =========================
+    if (margin > 1.5) {
+      score += 0.1; // عقوبة بسيطة
+    }
 
-// 🔹 Margin penalty (غير خطي)
-if (margin > 1.5) {
-  score += (margin - 1.5) * 50; // عقوبة قوية
-}
-else {
-  score += (margin - 1) * 30;
-}
+    // =========================
+    // 🔹 اختيار الأفضل
+    // =========================
+    if (score < bestScore) {
+      bestScore = score;
+      best = pump;
+    }
   }
+
+  // =========================
+  // 🔁 FALLBACK
+  // =========================
   if (!best) {
-  console.warn("⚠️ No suitable pump found — consider redesign");
-}
+
+    console.warn("⚠️ No pump within safe margin → fallback to closest TDH");
+
+    for (let pump of pumps) {
+
+      let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+      let diff = Math.abs(pumpHead - hyd.tdh);
+
+      if (!best || diff < bestScore) {
+        bestScore = diff;
+        best = pump;
+      }
+    }
+  }
 
   return best;
 }
-
 
 function interpolateHead(flow, curve) {
 
