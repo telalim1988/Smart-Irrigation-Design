@@ -925,10 +925,14 @@ else {
   // =========================
   let pumpHead = interpolateHead(flow.per_zone, pump.curve);
 
-  if (kpi.pumpMargin > 1.3) {
-    report += "⚠️ Pump oversized (" + (kpi.pumpMargin * 100).toFixed(0) + "% head margin)\n";
-    score -= 10;
-  }
+  if (kpi.pumpMargin > 2) {
+  report += "❌ Severely oversized pump (inefficient and unsafe)\n";
+  score -= 20;
+}
+else if (kpi.pumpMargin > 1.4) {
+  report += "⚠️ Pump oversized\n";
+  score -= 10;
+}
   else if (kpi.pumpMargin < 1.05) {
     report += "⚠️ Low safety margin (risk under load)\n";
     score -= 10;
