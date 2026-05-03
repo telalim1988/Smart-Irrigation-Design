@@ -389,15 +389,14 @@ function selectPump(hyd, flow) {
 
   for (let pump of pumps) {
 
-    // 🔹 Head عند التدفق
     let pumpHead = interpolateHead(flow.per_zone, pump.curve);
     let margin = pumpHead / hyd.tdh;
 
     // =========================
     // 🔴 HARD CONSTRAINTS
     // =========================
-    if (margin < 1.05) continue;   // ضغط غير كافي
-   if (margin > 1.5) continue;   // oversized خطير
+    if (margin < 1.05) continue;
+    if (margin > 1.5) continue;
 
     // =========================
     // 🔹 BEP
@@ -406,27 +405,20 @@ function selectPump(hyd, flow) {
     let bep = pump.curve[mid];
 
     let flowDiff = Math.abs(flow.per_zone - bep.flow);
-    let flowDeviation = flowDiff / bep.flow;
+    let flowDeviation = bep.flow > 0 ? flowDiff / bep.flow : 1;
 
     // =========================
     // 🔹 HEAD MATCH (الأهم)
     // =========================
     let headDiff = Math.abs(pumpHead - hyd.tdh);
-    let headDeviation = headDiff / hyd.tdh;
+    let headDeviation = hyd.tdh > 0 ? headDiff / hyd.tdh : 1;
 
     // =========================
-    // 🔹 SCORE (Weighted)
+    // 🔹 SCORE
     // =========================
     let score =
-      (headDeviation * 0.7) +   // أهم عامل
-      (flowDeviation * 0.3);
-
-    // =========================
-    // 🔹 Penalty إضافي
-    // =========================
-    if (margin > 1.5) {
-      score += 0.1; // عقوبة بسيطة
-    }
+      (headDeviation * 0.75) +   // رفع أهمية head
+      (flowDeviation * 0.25);
 
     // =========================
     // 🔹 اختيار الأفضل
@@ -438,18 +430,20 @@ function selectPump(hyd, flow) {
   }
 
   // =========================
-  // 🔁 FALLBACK
+  // 🔁 FALLBACK (مع reset صحيح)
   // =========================
   if (!best) {
 
     console.warn("⚠️ No pump within safe margin → fallback to closest TDH");
+
+    bestScore = Infinity; // 🔥 مهم جدًا
 
     for (let pump of pumps) {
 
       let pumpHead = interpolateHead(flow.per_zone, pump.curve);
       let diff = Math.abs(pumpHead - hyd.tdh);
 
-      if (!best || diff < bestScore) {
+      if (diff < bestScore) {
         bestScore = diff;
         best = pump;
       }
@@ -458,7 +452,6 @@ function selectPump(hyd, flow) {
 
   return best;
 }
-
 function interpolateHead(flow, curve) {
 
   for (let i = 0; i < curve.length - 1; i++) {
