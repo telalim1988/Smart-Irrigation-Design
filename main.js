@@ -1152,13 +1152,15 @@ Recommended action:
   // =========================
   let conclusion = "";
 
-  if (efficiencyLabel === "EXCELLENT") {
-    conclusion = "The system is optimally designed and operates at high efficiency. No modification required.";
-  } else if (efficiencyLabel === "GOOD") {
-    conclusion = "The system is stable and acceptable, with minor room for optimization.";
-  } else {
-    conclusion = "The system requires optimization to improve efficiency and performance.";
-  }
+if (efficiencyLabel === "EXCELLENT") {
+  conclusion = "The system is optimally designed and operates at high efficiency. No modification required.";
+}
+else if (efficiencyLabel === "GOOD") {
+  conclusion = "The system is stable and acceptable, with minor room for optimization.";
+}
+else {
+  conclusion = "The system requires optimization due to hydraulic or irrigation imbalance.";
+}
 
   return `
 ==============================
