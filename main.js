@@ -224,6 +224,9 @@ setText("analysis_text", summary + "\n\n" + ai.text);
     setText("ai_score", ai.score + " / 100");
     setText("ai_status", ai.status);
     setText("full_report", report);
+    if (ai.score >= 90) {
+  setText("ai_status", "🔥 OPTIMAL DESIGN");
+}
 
     // =========================
     // 🔹 SAVE DATA
@@ -698,26 +701,84 @@ function runAIEngine(input) {
   return best;
 }
 
+
+// =========================
+// 🤖 AUTO DESIGN ENGINE (NEW)
+// =========================
+function autoOptimizeSystem(input) {
+
+  let best = null;
+  let bestScore = -Infinity;
+
+  let velocities = [0.8, 1.0, 1.2];
+  let zoneOptions = [1, 2, 3, 4, 5];
+
+  for (let v of velocities) {
+    for (let z of zoneOptions) {
+
+      let tempInput = { ...input, velocity: v, zones: z };
+
+      let flow = calculateFlow(tempInput);
+      let hyd = calculateHydraulics(flow, tempInput);
+      let pump = selectPump(hyd, flow);
+
+      if (!pump) continue;
+
+      let energy = calculateEnergy(hyd, flow, tempInput);
+
+      let op = findOperatingPoint(pump, generateSystemCurve(flow, tempInput));
+
+      let ai = runAIAnalysis(flow, hyd, pump, op, tempInput, energy);
+
+      if (ai.score > bestScore) {
+        bestScore = ai.score;
+        best = {
+          input: tempInput,
+          flow,
+          hyd,
+          pump,
+          energy,
+          ai
+        };
+      }
+    }
+  }
+
+  return best;
+}
+
+
 function runFullAI() {
 
   let input = getInputs();
+  if (!input) return;
 
-  let result = runAIEngine(input);
+  let result = autoOptimizeSystem(input);
 
   if (!result) {
-    alert("No valid design found");
+    alert("No optimal design found");
     return;
   }
 
-  setText("opt_zones", result.zones);
+  // 🔹 عرض النتائج المحسنة
+  setText("opt_zones", result.input.zones);
   setText("opt_diameter", result.hyd.diameter.toFixed(3));
-  setText("opt_velocity", result.hyd.velocity.toFixed(2));
+  setText("opt_velocity", result.input.velocity.toFixed(2));
 
-  setText("comp_energy", result.energy.energy.toFixed(2));
+  setText("pump_select", result.pump.name);
 
-  setText("recommendation", "✔ AI Optimized Design");
- 
+  setText("energy", result.energy.energy.toFixed(2));
+
+  setText("recommendation", "🚀 AUTO OPTIMIZED DESIGN APPLIED");
+
+  // 🔥 تحديث النظام بالقيم الجديدة
+  document.getElementById("zones").value = result.input.zones;
+  document.getElementById("velocity").value = result.input.velocity;
+
+  // 🔁 إعادة الحساب
+  calculate();
 }
+
 
 // =========================
 // 🔹 KPI ENGINE (NEW)
