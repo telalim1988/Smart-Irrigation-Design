@@ -402,19 +402,25 @@ function selectPump(hyd, flow) {
     let diff = Math.abs(flow.per_zone - bep.flow);
 
     let deviation = diff / bep.flow;
+    if (margin > 1.8) continue;
 
     // 🔹 Score محسّن
-    let score =
-      (deviation * 60) +        // BEP أهم
-      (Math.abs(margin - 1) * 40); // Margin أقل أهمية
+    let score = 0;
 
-    if (margin < 1) continue; // غير كافي
+// 🔹 BEP deviation (الأهم)
+score += deviation * 70;
 
-    if (score < bestScore) {
-      bestScore = score;
-      best = pump;
-    }
+// 🔹 Margin penalty (غير خطي)
+if (margin > 1.5) {
+  score += (margin - 1.5) * 50; // عقوبة قوية
+}
+else {
+  score += (margin - 1) * 30;
+}
   }
+  if (!best) {
+  console.warn("⚠️ No suitable pump found — consider redesign");
+}
 
   return best;
 }
