@@ -790,8 +790,17 @@ function computeKPIs(flow, hyd, pump, input, energy) {
   let HL_ratio = hyd.hf / hyd.tdh;
 
   let requiredWater = (input.et0 * input.kc * input.area) / 1000;
-  let actualWater = flow.total * input.hours;
+  llet actualWater;
 
+let mode = document.getElementById("mode").value;
+
+if (mode === "zone") {
+  // Sequential irrigation
+  actualWater = flow.per_zone * input.hours * input.zones;
+} else {
+  // Full system
+  actualWater = flow.total * input.hours;
+}
   let balance = actualWater / requiredWater;
 
   let pumpMargin = pumpHead / hyd.tdh;
