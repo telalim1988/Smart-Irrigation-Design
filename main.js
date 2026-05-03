@@ -204,7 +204,19 @@ function calculate() {
       ai
     );
 
-    setText("analysis_text", ai.text);
+    let kpi = computeKPIs(flow, hyd, pump, input, energy);
+
+let summary = `
+Score: ${ai.score}/100
+
+Hydraulics: ${kpi.HL_ratio > 0.4 ? "⚠️ High Loss" : "✅ OK"}
+Pump: ${kpi.pumpMargin > 1.3 ? "⚠️ Oversized" : "✅ OK"}
+Irrigation: ${kpi.balance > 1.1 ? "⚠️ Over" : (kpi.balance < 0.9 ? "⚠️ Under" : "✅ Balanced")}
+Energy: ${energy.power > 1 ? "⚠️ High" : "✅ Efficient"}
+`;
+
+setText("analysis_text", summary + "\n\n" + ai.text);
+    
     setText("ai_score", ai.score + " / 100");
     setText("ai_status", ai.status);
     setText("full_report", report);
@@ -703,7 +715,30 @@ function runFullAI() {
  
 }
 
+// =========================
+// 🔹 KPI ENGINE (NEW)
+// =========================
+function computeKPIs(flow, hyd, pump, input, energy) {
 
+  let pumpHead = interpolateHead(flow.per_zone, pump.curve);
+
+  let HL_ratio = hyd.hf / hyd.tdh;
+
+  let requiredWater = (input.et0 * input.kc * input.area) / 1000;
+  let actualWater = flow.total * input.hours;
+
+  let balance = actualWater / requiredWater;
+
+  let pumpMargin = pumpHead / hyd.tdh;
+
+  return {
+    HL_ratio,
+    requiredWater,
+    actualWater,
+    balance,
+    pumpMargin
+  };
+}
 
 // =========================
 // 🔍 ANALYSIS ENGINE
@@ -713,6 +748,8 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
 
   let report = "";
   let score = 100;
+
+  let kpi = computeKPIs(flow, hyd, pump, input, energy);
 
   // =========================
   // 🔹 HYDRAULICS
@@ -726,6 +763,15 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   } else {
     report += "✅ Hydraulic velocity is within optimal range.\n";
   }
+
+  // 🔹 HEAD LOSS RATIO (NEW)
+if (kpi.HL_ratio > 0.4) {
+  report += "⚠️ High head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
+  score -= 10;
+}
+else {
+  report += "✅ Head loss within acceptable range\n";
+}
 
   // =========================
   // 🔹 PUMP PERFORMANCE
@@ -756,23 +802,18 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
 let pumpHead = interpolateHead(flow.per_zone, pump.curve);
 let margin = pumpHead / hyd.tdh;
 
-// Oversized
-if (margin > 1.3) {
-  report += "⚠️ Pump oversized → energy waste.\n";
+if (kpi.pumpMargin > 1.3) {
+  report += "⚠️ Pump oversized (" + (kpi.pumpMargin * 100).toFixed(0) + "% head margin)\n";
   score -= 10;
 }
-
-// Low safety margin
-else if (margin < 1.05) {
-  report += "⚠️ Pump operates with very low safety margin (risk under load).\n";
+else if (kpi.pumpMargin < 1.05) {
+  report += "⚠️ Low safety margin (risk under load)\n";
   score -= 10;
 }
-
-// Optimal
 else {
-  report += "✅ Pump operates within safe and efficient margin.\n";
+  report += "✅ Pump correctly matched\n";
 }
-
+  
   // =========================
   // 🔹 ENERGY
   // =========================
@@ -782,6 +823,19 @@ else {
   } else {
     report += "✅ Energy consumption is efficient.\n";
   }
+
+  // 🔹 IRRIGATION BALANCE (NEW)
+if (kpi.balance > 1.1) {
+  report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
+  score -= 10;
+}
+else if (kpi.balance < 0.9) {
+  report += "⚠️ Under-irrigation detected\n";
+  score -= 10;
+}
+else {
+  report += "✅ Irrigation demand matched\n";
+}
 
   // =========================
   // 🔹 FINAL RATING
