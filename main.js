@@ -790,7 +790,7 @@ function computeKPIs(flow, hyd, pump, input, energy) {
   let HL_ratio = hyd.hf / hyd.tdh;
 
   let requiredWater = (input.et0 * input.kc * input.area) / 1000;
-  llet actualWater;
+  let actualWater;
 
 let mode = document.getElementById("mode").value;
 
