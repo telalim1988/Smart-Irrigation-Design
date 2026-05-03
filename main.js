@@ -801,7 +801,11 @@ if (mode === "zone") {
   // Full system
   actualWater = flow.total * input.hours;
 }
-  let balance = actualWater / requiredWater;
+ let efficiencyFactor = 0.9; // drip efficiency
+
+let adjustedRequired = requiredWater / efficiencyFactor;
+
+let balance = actualWater / adjustedRequired;
 
   let pumpMargin = pumpHead / hyd.tdh;
 
@@ -903,14 +907,12 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   // =========================
   // 🔹 IRRIGATION BALANCE
   // =========================
-  if (kpi.balance > 1.1) {
-    report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
-    score -= 10;
-  }
-  else if (kpi.balance < 0.9) {
-    report += "⚠️ Under-irrigation detected\n";
-    score -= 10;
-  }
+  if (kpi.balance > 1.2) {
+  report += "⚠️ Over-irrigation detected (significant excess water)\n";
+}
+else if (kpi.balance > 1.05) {
+  report += "⚠️ Slight over-irrigation (within acceptable range)\n";
+}
   else {
     report += "✅ Irrigation demand matched\n";
   }
