@@ -397,7 +397,7 @@ function selectPump(hyd, flow) {
     // 🔴 HARD CONSTRAINTS
     // =========================
     if (margin < 1.05) continue;   // ضغط غير كافي
-    if (margin > 1.8) continue;    // oversized خطير
+   if (margin > 1.5) continue;   // oversized خطير
 
     // =========================
     // 🔹 BEP
