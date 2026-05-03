@@ -827,10 +827,12 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   // =========================
   // 🔹 HYDRAULICS
   // =========================
-  if (input.velocity < 0.6) {
-    report += "⚠️ Low velocity may cause sedimentation.\n";
-    score -= 10;
-  } else if (input.velocity > 2) {
+ Hydraulic: ${
+  kpi.HL_ratio > 0.4 ? "Poor" :
+  kpi.HL_ratio > 0.3 ? "Moderate" :
+  "Good"
+}
+  }else if (input.velocity > 2) {
     report += "⚠️ High velocity may cause pipe wear and losses.\n";
     score -= 10;
   } else {
