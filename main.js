@@ -832,7 +832,7 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   kpi.HL_ratio > 0.3 ? "Moderate" :
   "Good"
 }
-  }else if (input.velocity > 2) {
+  } else if (input.velocity > 2) {
     report += "⚠️ High velocity may cause pipe wear and losses.\n";
     score -= 10;
   } else {
