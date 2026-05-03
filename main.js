@@ -1045,7 +1045,7 @@ function getC(material) {
 
 
 function generateFullReport(flow, hyd, pump, op, input, energy, ai) {
-
+let kpi = computeKPIs(flow, hyd, pump, input, energy);
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
 
