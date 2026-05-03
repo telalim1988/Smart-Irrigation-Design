@@ -765,12 +765,16 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
   }
 
   // 🔹 HEAD LOSS RATIO (NEW)
-if (kpi.HL_ratio > 0.4) {
+if (kpi.HL_ratio > 0.35) {
   report += "⚠️ High head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
   score -= 10;
 }
+else if (kpi.HL_ratio > 0.25) {
+  report += "⚠️ Moderate head loss\n";
+  score -= 5;
+}
 else {
-  report += "✅ Head loss within acceptable range\n";
+  report += "✅ Head loss within optimal range\n";
 }
 
   // =========================
