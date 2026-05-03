@@ -1078,25 +1078,31 @@ if (alert === "OK") {
   alertBox.className = "box danger";
 }
 
-  // 🔹 Recommendation
- let rec = "OK";
+// 🔹 Recommendation
+let rec = "OK";
+
 if (pump_head > hyd.tdh * 1.5) {
- if (kpi.pumpMargin > 1.5) {
-  rec = "Select a lower head pump (~6 m) to match system TDH";
-}
 
-if (alert !== "OK") rec = "Adjust velocity";
+  if (kpi.pumpMargin > 1.5) {
+    rec = "Select a lower head pump (~6 m) to match system TDH";
+  }
 
-if (bepStatus && bepStatus.includes("Far")) {
-  rec = "Adjust zones to reach BEP";
-}
- let recBox = document.getElementById("rec_box");
+  if (alert !== "OK") rec = "Adjust velocity";
+
+  if (bepStatus && bepStatus.includes("Far")) {
+    rec = "Adjust zones to reach BEP";
+  }
+
+} // 🔥 هذا القوس كان ناقص
+
+let recBox = document.getElementById("rec_box");
 
 if (rec.includes("OK")) {
   recBox.className = "box success";
 } else {
   recBox.className = "box warning";
 }
+
 setText("recommendation", rec);
 
   // =========================
