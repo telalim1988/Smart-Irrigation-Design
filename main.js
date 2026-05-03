@@ -821,17 +821,16 @@ if (mode === "zone") {
 function runAIAnalysis(flow, hyd, pump, op, input, energy) {
 
   let report = "";
- let score = 85;
+  let score = 85;
+
   let kpi = computeKPIs(flow, hyd, pump, input, energy);
 
   // =========================
-  // 🔹 HYDRAULICS
+  // 🔹 HYDRAULICS (Velocity)
   // =========================
- Hydraulic: ${
-  kpi.HL_ratio > 0.4 ? "Poor" :
-  kpi.HL_ratio > 0.3 ? "Moderate" :
-  "Good"
-}
+  if (input.velocity < 0.6) {
+    report += "⚠️ Low velocity may cause sedimentation.\n";
+    score -= 10;
   } else if (input.velocity > 2) {
     report += "⚠️ High velocity may cause pipe wear and losses.\n";
     score -= 10;
@@ -839,21 +838,23 @@ function runAIAnalysis(flow, hyd, pump, op, input, energy) {
     report += "✅ Hydraulic velocity is within optimal range.\n";
   }
 
-  // 🔹 HEAD LOSS RATIO (NEW)
-if (kpi.HL_ratio > 0.35) {
-  report += "⚠️ High head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
-  score -= 10;
-}
-else if (kpi.HL_ratio > 0.25) {
-  report += "⚠️ Moderate head loss\n";
-  score -= 5;
-}
-else {
-  report += "✅ Head loss within optimal range\n";
-}
+  // =========================
+  // 🔹 HEAD LOSS RATIO
+  // =========================
+  if (kpi.HL_ratio > 0.35) {
+    report += "⚠️ High head loss (" + (kpi.HL_ratio * 100).toFixed(1) + "% of TDH)\n";
+    score -= 10;
+  }
+  else if (kpi.HL_ratio > 0.25) {
+    report += "⚠️ Moderate head loss\n";
+    score -= 5;
+  }
+  else {
+    report += "✅ Head loss within optimal range\n";
+  }
 
   // =========================
-  // 🔹 PUMP PERFORMANCE
+  // 🔹 PUMP PERFORMANCE (BEP)
   // =========================
   let mid = Math.floor(pump.curve.length / 2);
   let bep = pump.curve[mid];
@@ -873,26 +874,22 @@ else {
   }
 
   // =========================
-  // 🔹 OVERSIZING CHECK
+  // 🔹 PUMP MATCHING
   // =========================
- // =========================
-// 🔹 PUMP MATCHING ANALYSIS (🔥 مطور)
-// =========================
-let pumpHead = interpolateHead(flow.per_zone, pump.curve);
-let margin = pumpHead / hyd.tdh;
+  let pumpHead = interpolateHead(flow.per_zone, pump.curve);
 
-if (kpi.pumpMargin > 1.3) {
-  report += "⚠️ Pump oversized (" + (kpi.pumpMargin * 100).toFixed(0) + "% head margin)\n";
-  score -= 10;
-}
-else if (kpi.pumpMargin < 1.05) {
-  report += "⚠️ Low safety margin (risk under load)\n";
-  score -= 10;
-}
-else {
-  report += "✅ Pump correctly matched\n";
-}
-  
+  if (kpi.pumpMargin > 1.3) {
+    report += "⚠️ Pump oversized (" + (kpi.pumpMargin * 100).toFixed(0) + "% head margin)\n";
+    score -= 10;
+  }
+  else if (kpi.pumpMargin < 1.05) {
+    report += "⚠️ Low safety margin (risk under load)\n";
+    score -= 10;
+  }
+  else {
+    report += "✅ Pump correctly matched\n";
+  }
+
   // =========================
   // 🔹 ENERGY
   // =========================
@@ -903,36 +900,42 @@ else {
     report += "✅ Energy consumption is efficient.\n";
   }
 
-  // 🔹 IRRIGATION BALANCE (NEW)
-if (kpi.balance > 1.1) {
-  report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
-
-  score -= 10;
-}
-else if (kpi.balance < 0.9) {
-  report += "⚠️ Under-irrigation detected\n";
-  score -= 10;
-}
-else {
-  report += "✅ Irrigation demand matched\n";
-}
-  // 🔹 SYSTEM LOGIC LINK (NEW)
-if (kpi.pumpMargin > 1.2 && kpi.balance > 1.05) {
-  report += "⚠️ Excess pressure likely causing over-irrigation\n";
-  score -= 5;
-}
+  // =========================
+  // 🔹 IRRIGATION BALANCE
+  // =========================
+  if (kpi.balance > 1.1) {
+    report += "⚠️ Over-irrigation detected (" + (kpi.balance * 100).toFixed(0) + "% supply)\n";
+    score -= 10;
+  }
+  else if (kpi.balance < 0.9) {
+    report += "⚠️ Under-irrigation detected\n";
+    score -= 10;
+  }
+  else {
+    report += "✅ Irrigation demand matched\n";
+  }
 
   // =========================
-  // 🔹 FINAL RATING
+  // 🔹 SYSTEM LOGIC LINK
+  // =========================
+  if (kpi.pumpMargin > 1.2 && kpi.balance > 1.05) {
+    report += "⚠️ Excess pressure likely causing over-irrigation\n";
+    score -= 5;
+  }
+
+  // =========================
+  // 🔹 FINAL STATUS
   // =========================
   let status = "EXCELLENT";
 
   if (score < 85) status = "GOOD";
   if (score < 70) status = "MODERATE";
   if (score < 50) status = "POOR";
-// 🔹 Clamp score
-if (score > 100) score = 100;
-if (score < 0) score = 0;
+
+  // Clamp
+  if (score > 100) score = 100;
+  if (score < 0) score = 0;
+
   return {
     text: report,
     score: score,
